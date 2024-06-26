@@ -1,8 +1,12 @@
 import { Networking } from "@flamework/networking";
 
-interface ClientToServerEvents {}
+interface ClientToServerEvents {
+	BoomTool(cframe: CFrame): void
+}
 
-interface ServerToClientEvents {}
+interface ServerToClientEvents {
+	HandleVoxels(voxels: Part[]): void
+}
 
 interface ClientToServerFunctions {}
 
