@@ -19,7 +19,7 @@ export class BoomToolComponent extends BaseComponent<{}, BoomTool> implements On
 	}
 	
 	activated() {
-		Events.BoomTool.fire(player.GetMouse().Hit, tonumber(this.inputGui.input.Text) as number, 2)
+		Events.BoomTool.fire(player.GetMouse().Hit, tonumber(this.inputGui.input.Text) as number, 1)
 	}
 
 	equipped() {

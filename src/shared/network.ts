@@ -5,7 +5,7 @@ interface ClientToServerEvents {
 }
 
 interface ServerToClientEvents {
-	HandleVoxels(voxels: Part[]): void
+	HandleVoxels(voxels: Part[], cframe: CFrame, power: number): void
 }
 
 interface ClientToServerFunctions {}

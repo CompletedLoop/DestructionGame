@@ -1,19 +1,20 @@
 import { Events } from "server/network";
 import VoxBreaker from "../../shared/VoxBreaker"
 import { ReplicatedStorage } from "services";
-
-const VOXEL_LIFETIME = 25
+import { Constants } from "shared/Constants";
 
 class DestructionModuleClass {
 	VoxelizeInRadius(radius: number, cframe: CFrame, voxel_size: number) {
-		let voxels = VoxBreaker.CreateHitbox(Vector3.one.mul(radius), cframe, Enum.PartType.Ball, voxel_size, VOXEL_LIFETIME)
+		let voxels = VoxBreaker.CreateHitbox(Vector3.one.mul(radius), cframe, Enum.PartType.Ball, voxel_size, Constants.VOXEL_LIFETIME)
 		return voxels
 	}
 
-	PassVoxelsToClients(voxels: Part[]) {
-		if (!voxels[0]) {return}
-		voxels[0].Parent = ReplicatedStorage // Replicate over the voxels
-		Events.HandleVoxels.broadcast(voxels)
+	PassVoxelsToClients(voxels: Part[], cframe: CFrame, power: number) {
+		if (voxels.size() < 1) {return}
+
+		// Replicate over the voxels
+		voxels.forEach((voxel: Part) => {voxel.CanCollide = false;voxel.Parent = ReplicatedStorage})
+		Events.HandleVoxels.broadcast(voxels, cframe, power)
 
 		// Destroy all voxels since the client will handel them
 		voxels.forEach((voxel: Part) => {voxel.Destroy()})

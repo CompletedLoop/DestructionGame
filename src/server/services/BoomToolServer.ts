@@ -8,7 +8,7 @@ export class BoomToolServer implements OnStart {
 	onStart() {
 		Events.BoomTool.connect((player: Player, cframe: CFrame, radius: number , power: number) => {
 			let voxels = DestructionModule.VoxelizeInRadius(radius, cframe, 3)
-			DestructionModule.PassVoxelsToClients(voxels)
+			DestructionModule.PassVoxelsToClients(voxels, cframe, power)
 		})
 	}
 }

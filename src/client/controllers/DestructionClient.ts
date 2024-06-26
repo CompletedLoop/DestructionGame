@@ -1,16 +1,35 @@
-import { Service, OnStart } from "@flamework/core";
+import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Workspace } from "services";
+import { Constants } from "shared/Constants";
 
-@Service({})
+@Controller({})
 export class DestructionClient implements OnStart {
 	onStart() {
-		Events.HandleVoxels.connect((replicated_voxels: Part[]) => {
-			print("sup")
-			print(replicated_voxels.size())
-			let voxel_holder = this.cloneReplicatedVoxels(replicated_voxels)
-			let voxels = voxel_holder.GetChildren()
+		Events.HandleVoxels.connect((replicated_voxels, cframe, power) => 
+			this.handleVoxels(replicated_voxels, cframe, power))
+	}
 
+	handleVoxels(replicated_voxels: Part[], cframe: CFrame, power: number) {
+		let voxel_holder = this.cloneReplicatedVoxels(replicated_voxels)
+		let voxels = voxel_holder.GetChildren() as Part[]
+
+		let voxel_count = 0
+
+		voxels.forEach((voxel: Part) => {
+			if (voxel_count >= Constants.MAX_DEBRIS) {
+				voxel.Destroy()
+				return
+			}
+
+			voxel_count += 1
+
+			voxel.Size = voxel.Size.mul(.95)
+			voxel.Anchored = false
+			voxel.CanCollide = true
+
+			voxel.SetAttribute("Destroyable", false)
+			this.applyForceToVoxel(voxel, cframe, power)
 		})
 	}
 
@@ -25,10 +44,9 @@ export class DestructionClient implements OnStart {
 	}
 
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power: number) {
-		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul(-60 * (voxel.Mass/2))
-		velocity.mul(power)
-		velocity.mul(new Vector3(1, 2, 1))
+		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul(-(-60 * (voxel.Mass/2)))
+		velocity = velocity.mul(new Vector3(1, 2, 1).mul(power))
 		voxel.ApplyImpulse(velocity)
-		voxel.ApplyAngularImpulse(velocity.div(2))
+		// voxel.ApplyAngularImpulse(velocity.div(2))
 	}
 }
