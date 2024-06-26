@@ -1,11 +1,11 @@
 import { Networking } from "@flamework/networking";
 
 interface ClientToServerEvents {
-	BoomTool(cframe: CFrame, radius: number | undefined, power: number): void
+	BoomTool(cframe: CFrame, radius: number, power: number): void
 }
 
 interface ServerToClientEvents {
-	// HandleVoxels(voxels: Part[]): void
+	HandleVoxels(voxels: Part[]): void
 }
 
 interface ClientToServerFunctions {}
