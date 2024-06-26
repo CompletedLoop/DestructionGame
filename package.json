@@ -12,7 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@rbxts/compiler-types": "^2.3.0-types.1",
-    "@rbxts/types": "^1.0.777",
+    "@rbxts/types": "^1.0.783",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
     "@typescript-eslint/parser": "^6.7.5",
     "eslint": "^7.31.0",
@@ -27,6 +27,7 @@
   "dependencies": {
     "@flamework/components": "^1.2.2",
     "@flamework/core": "^1.2.2",
-    "@flamework/networking": "^1.2.2"
+    "@flamework/networking": "^1.2.2",
+    "@rbxts/profileservice": "^1.4.2"
   }
 }
