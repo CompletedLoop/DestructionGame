@@ -1,11 +1,11 @@
-import { OnStart } from "@flamework/core";
+import { OnRender, OnStart, OnTick } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { character } from "types/character"
 import { RunService } from "services";
 
 
 @Component({tag: "Character"})
-export class CharacterClient extends BaseComponent<{}, character> implements OnStart {
+export class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {
 	humanoid!: Humanoid;
 	torso!: Part;
 	humanoid_root!: Part;
@@ -16,12 +16,9 @@ export class CharacterClient extends BaseComponent<{}, character> implements OnS
 
 		this.joint = this.instance.HumanoidRootPart.RootJoint
 		this.original_C0 = this.joint.C0
-
-		RunService.RenderStepped.Connect((delta) => this.RenderStepped(delta))
-		RunService.Heartbeat.Connect((delta) => this.Heartbeat(delta))
 	}
 
-	Heartbeat(delta: number) {
+	onTick(delta: number) {
 
 	}
 
@@ -29,7 +26,7 @@ export class CharacterClient extends BaseComponent<{}, character> implements OnS
 	tilt = 8
 	joint!: Motor6D;
 	original_C0!: CFrame;
-	RenderStepped(delta: number) {
+	onRender(delta: number) {
 		let xdir = this.humanoid.MoveDirection.Dot(this.humanoid_root.CFrame.LookVector)
 		let zdir = -this.humanoid.MoveDirection.Dot(this.humanoid_root.CFrame.RightVector)
 		let target = this.original_C0.mul(CFrame.Angles(math.rad(this.tilt * xdir),math.rad(this.tilt * zdir),0))
