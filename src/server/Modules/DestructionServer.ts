@@ -1,5 +1,5 @@
 import { Events } from "server/network";
-import VoxBreaker from "../../shared/VoxBreaker"
+import VoxBreaker from "shared/Luau/VoxBreaker"
 import { ReplicatedStorage } from "services";
 import { Constants } from "shared/Constants";
 

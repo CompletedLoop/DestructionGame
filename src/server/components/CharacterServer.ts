@@ -2,15 +2,15 @@ import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { character } from "types/character";
 import { Character } from "@rbxts/wcs";
-import { m1 } from "shared/Skills/Base/m1";
+import { Base } from "shared/Movesets/Base";
 
 @Component({tag: "Character"})
 export class CharacterServer extends BaseComponent<{}, character> implements OnStart {
 	onStart() {
 		const WSC_Character = new Character(this.instance)
 
-		// Apply basic abilities
-		new m1(WSC_Character)
+		// Apply base moveset
+		WSC_Character.ApplySkillsFromMoveset(Base)
 
 		// Apply chosen moveset
 
