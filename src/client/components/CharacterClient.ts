@@ -1,14 +1,25 @@
 import { OnRender, OnStart, OnTick } from "@flamework/core";
-import { Component, BaseComponent } from "@flamework/components";
+import { Component, BaseComponent, Components } from "@flamework/components";
 import { character } from "types/character"
 import { RunService, Players } from "services";
 
-@Component({tag: "Character"})
+@Component({tag: "character"})
 export class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {
 	humanoid!: Humanoid;
 	torso!: Part;
 	humanoid_root!: Part;
+
+	constructor(private readonly components: Components) {
+		super();
+	}
 	onStart() {
+		// Insure the component only attatch to the right character   
+		if (this.instance !== Players.LocalPlayer.Character) {
+			// print("no", this.instance)
+			this.components.removeComponent<CharacterClient>(this.instance)
+			return
+		}
+
 		this.humanoid = this.instance.Humanoid
 		this.torso = this.instance.Torso
 		this.humanoid_root = this.instance.HumanoidRootPart

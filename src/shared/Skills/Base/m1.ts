@@ -1,37 +1,33 @@
-import { Message, Skill, SkillDecorator } from "@rbxts/wcs";
+import { AnyStatus, Message, Skill, SkillDecorator } from "@rbxts/wcs";
+import { Constructor } from "@rbxts/wcs/out/source/utility";
+import { Blocking } from "shared/StatusEffects/Blocking";
+import { Stun } from "shared/StatusEffects/Stun";
 
 @SkillDecorator
 export class m1 extends Skill {
-	combo!: 1
+	protected MutualExclusives: Constructor<AnyStatus>[] = [
+		Stun, Blocking
+	];
+
 	protected OnConstructServer(): void {
-		this.combo = 1
+		
 	}
 
 	protected OnConstructClient(): void {
+		// Load animations
 
 	}
 	
 	public OnStartServer(): void {
-		print(this.combo)
-		this.printSomethingFromServer("wsg fam")
+		print("m1_s")
+		// Validate m1 request
+
+		
+
 		this.ApplyCooldown(1)
 	}
-
+	
 	public OnStartClient(): void {
-		// this.getCombo().andThen((value: number) => {print(value)})
-		let [worked, combo] = this.getCombo().await()
-		if (worked) {
-			print(combo)
-		}
-	}
-
-	@Message({Type: "Event", Destination: "Client"})
-	protected printSomethingFromServer(thing: string) {
-		print(thing)
-	}
-
-	@Message({Type: "Request", Destination: "Server"})
-	protected async getCombo() {
-		return this.combo
+		print("m1_c")
 	}
 }
