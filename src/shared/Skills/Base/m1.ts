@@ -2,20 +2,36 @@ import { Message, Skill, SkillDecorator } from "@rbxts/wcs";
 
 @SkillDecorator
 export class m1 extends Skill {
-	public OnStartServer(): void {
-		print("attack initiated on server")
-		
-		this.serverSaidSomething(`Hello Client`)
+	combo!: 1
+	protected OnConstructServer(): void {
+		this.combo = 1
+	}
 
+	protected OnConstructClient(): void {
+
+	}
+	
+	public OnStartServer(): void {
+		print(this.combo)
+		this.printSomethingFromServer("wsg fam")
 		this.ApplyCooldown(1)
 	}
 
 	public OnStartClient(): void {
-		print("attack initiated on client")
+		// this.getCombo().andThen((value: number) => {print(value)})
+		let [worked, combo] = this.getCombo().await()
+		if (worked) {
+			print(combo)
+		}
 	}
 
-	@Message({ Type: "Event", Destination: "Client", })
-	protected serverSaidSomething(thing: string) {
+	@Message({Type: "Event", Destination: "Client"})
+	protected printSomethingFromServer(thing: string) {
 		print(thing)
+	}
+
+	@Message({Type: "Request", Destination: "Server"})
+	protected async getCombo() {
+		return this.combo
 	}
 }

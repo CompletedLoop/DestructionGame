@@ -1,8 +1,7 @@
 import { OnRender, OnStart, OnTick } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 import { character } from "types/character"
-import { RunService } from "services";
-
+import { RunService, Players } from "services";
 
 @Component({tag: "Character"})
 export class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {

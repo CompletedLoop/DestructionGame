@@ -1,5 +1,7 @@
 import { Service, OnStart, OnInit } from "@flamework/core";
+import { Character } from "@rbxts/wcs";
 import { Players } from "services";
+import { Base } from "shared/Movesets/Base";
 import { plr } from "types/plr";
 @Service({})
 export class PlayerDataHandler implements OnStart {
@@ -9,7 +11,7 @@ export class PlayerDataHandler implements OnStart {
 
 	playerAdded(player: plr) {
 		player.CharacterAdded.Connect((character) => {
-			character.AddTag("Character")
+			character.AddTag(`character`)
 		})
 	}
 }

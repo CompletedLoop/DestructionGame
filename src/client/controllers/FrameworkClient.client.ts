@@ -11,4 +11,4 @@ Client.RegisterDirectory(ReplicatedStorage.TS.StatusEffects);
 Client.Start()
 
 task.wait(.5)
-LogService.ClearOutput()
+// LogService.ClearOutput()
