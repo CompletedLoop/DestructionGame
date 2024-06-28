@@ -27,8 +27,10 @@ export class BoomToolComponent extends BaseComponent<{}, BoomTool> implements On
 	}
 
 	unequipped() {
-		if (this.instance.Parent) {
-			this.inputGui.Parent = this.instance
-		}
+		pcall(() => {
+			if (this.instance.Parent) {
+				this.inputGui.Parent = this.instance
+			}
+		})
 	}
 }

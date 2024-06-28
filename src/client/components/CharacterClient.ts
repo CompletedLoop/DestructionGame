@@ -3,7 +3,10 @@ import { Component, BaseComponent, Components } from "@flamework/components";
 import { character } from "types/character"
 import { RunService, Players } from "services";
 
-@Component({tag: "character"})
+@Component({
+	tag: "character",
+	predicate: (instance) => instance === Players.LocalPlayer.Character
+})
 export class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {
 	humanoid!: Humanoid;
 	torso!: Part;
@@ -13,13 +16,6 @@ export class CharacterClient extends BaseComponent<{}, character> implements OnS
 		super();
 	}
 	onStart() {
-		// Insure the component only attatch to the right character   
-		if (this.instance !== Players.LocalPlayer.Character) {
-			// print("no", this.instance)
-			this.components.removeComponent<CharacterClient>(this.instance)
-			return
-		}
-
 		this.humanoid = this.instance.Humanoid
 		this.torso = this.instance.Torso
 		this.humanoid_root = this.instance.HumanoidRootPart
