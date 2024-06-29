@@ -4,7 +4,8 @@ local VoxelDestruct = require(ReplicatedStorage.Modules.VoxelDestruction)
 local VoxelModule = {}
 
 VoxelModule.DestroyInRadius = function(radius, cframe)
-	VoxelDestruct.destroy(cframe, Vector3.one * radius)
+	local voxels, walls = VoxelDestruct.destroy(cframe, Vector3.one * radius)
+	return voxels
 end
 
 return VoxelModule
