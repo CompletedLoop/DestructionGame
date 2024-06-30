@@ -17,7 +17,7 @@ interface ReplicatedStorage extends Instance {
 			m1: ModuleScript;
 		};
 		StatusEffects: Folder & {
-			stun: ModuleScript;
+			Stun: ModuleScript;
 		};
 		VoxBreaker: ModuleScript;
 		components: Folder;

@@ -8,13 +8,10 @@ VoxelModule.DestroyInRadius = function(radius, cframe)
 		cframe, Vector3.one * radius,
 		Enum.PartType.Ball,
 		OverlapParams.new(),
-		2,
-		nil,
-		nil,
-		nil,
-		true,
-		10
+		2
 	)
+
+	print(voxels)
 
 	-- if true then
 	-- 	for _, voxel: Part in voxels do
