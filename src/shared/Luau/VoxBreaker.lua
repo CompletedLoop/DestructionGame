@@ -625,7 +625,7 @@ local function DivideBlock(block : Part, MinimumVoxelSize : number, Parent : Ins
 				end
 
 
-				task.delay(.1, function()
+				task.delay(.075, function()
 					block.Transparency = 1
 				end)
 				block.CanCollide = false

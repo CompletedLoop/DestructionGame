@@ -29,6 +29,7 @@
     "@flamework/core": "^1.2.3",
     "@flamework/networking": "^1.2.3",
     "@rbxts/profileservice": "^1.4.2",
-    "@rbxts/wcs": "^2.1.2"
+    "@rbxts/topbar-plus": "^3.0.2",
+    "@rbxts/wcs": "^2.1.2-dev-14c5908"
   }
 }

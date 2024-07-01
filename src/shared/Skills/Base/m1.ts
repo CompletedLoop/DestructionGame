@@ -12,15 +12,23 @@ export class m1 extends Skill {
 	protected MutualExclusives: Constructor<AnyStatus>[] = [
 		Stun, Blocking, Ragdolled
 	];
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	protected OnConstructServer(): void {
+	combo!: number
+	humanoid!: Humanoid
+	protected OnConstruct(): void {
+		this.humanoid = this.Character.Instance.FindFirstChildOfClass("Humanoid") as Humanoid
+		this.combo = 1
 		
 	}
 
+	last_m1!: number
+	protected OnConstructServer(): void {
+		this.last_m1 = 0
+	}
+
 	m1_anims!: AnimationTrack[]
-	humanoid!: Humanoid
 	protected OnConstructClient(): void {
-		this.humanoid = this.Character.Instance.FindFirstChildOfClass("Humanoid") as Humanoid
 		const animator = this.humanoid.FindFirstChildOfClass("Animator") as Animator
 		RunService.Stepped.Wait()
 
@@ -32,15 +40,37 @@ export class m1 extends Skill {
 			this.m1_anims[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
 		})
 	}
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	
 	public OnStartServer(): void {
-		// Validate m1 request
+		let last_m1 = tick() - this.last_m1
+		if (last_m1 >= 1.5) {this.combo = 1}
+
+		this.last_m1 = tick()
+
+		task.delay(.4, () => {
+			this.combo += 1
+			if (this.combo > m1_anims.GetChildren().size()) {
+				this.combo = 1
+			}
+		})
 
 		this.ApplyCooldown(1)
 	}
 	
 	public OnStartClient(): void {
-		this.m1_anims[0].Play()
-		
+		// this.m1_anims[0].Play()
+		let [worked, combo] = this.currentCombo().await()
+		print(worked)
+		if (worked) {
+			print(combo)
+		}
+	}
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	@Message({Type: "Request", Destination: "Server"})
+	protected async currentCombo() {
+		print("hey")
+		return this.combo
 	}
 }
