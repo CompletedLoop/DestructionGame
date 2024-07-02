@@ -5,11 +5,7 @@ const Vizualize: CommandDefinition = {
 	Aliases: ["vz"],
 	Description: "Vizualize Voxels",
 	Group: "DefaultAdmin",
-	Args: [],
-
-	// ClientRun: (context: CommandContext) => {
-		
-	// }
+	Args: []
 }
 
 export = Vizualize

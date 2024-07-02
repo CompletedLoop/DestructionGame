@@ -28,7 +28,9 @@
 		"flamework.build": true,
 		"README.md": true,
 		"tsconfig.json": true,
-		"package-lock.json": true
+		"package-lock.json": true,
+		".eslintrc": true,
+		"aftman.toml": true
 	},
 	"explorerExclude.backup": {}
 }

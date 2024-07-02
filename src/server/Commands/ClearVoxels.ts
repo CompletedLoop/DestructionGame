@@ -5,13 +5,7 @@ const ClearVoxels: CommandDefinition = {
 	Aliases: ["cv"],
 	Description: "Clear Voxels",
 	Group: "DefaultAdmin",
-	Args: [],
-
-	// ClientRun: (context: CommandContext) => {
-	// 	if (false) {
-	// 		return ""
-	// 	}
-	// }
+	Args: []
 }
 
 export = ClearVoxels
