@@ -6,11 +6,10 @@ import { Constants } from "shared/Constants";
 @Controller({})
 export class DestructionClient implements OnStart {
 	onStart() {
-		Events.HandleVoxels.connect((replicated_voxels, cframe, power) => 
-			this.handleVoxels(replicated_voxels, cframe, power))
+		Events.Voxels.HandleVoxels.connect((replicated_voxels, cframe, power) => this.handleVoxels(replicated_voxels, cframe, power))
 
 		{}
-		Events.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
+		Events.Voxels.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
 	}
 
 	handleVoxels(replicated_voxels: Part[], cframe: CFrame, power: number) {

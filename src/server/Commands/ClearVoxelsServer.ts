@@ -4,5 +4,5 @@ import { Workspace, ReplicatedStorage } from "services";
 
 export = (context: CommandContext) => {
 	Workspace.FX.Voxels.ClearAllChildren()
-	Events.ClearVoxels.broadcast()
+	Events.Voxels.ClearVoxels.broadcast()
 }

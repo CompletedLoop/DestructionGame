@@ -14,7 +14,7 @@ class DestructionModuleClass {
 
 		// Replicate over the voxels
 		voxels.forEach((voxel: Part) => {voxel.CanCollide = false;voxel.Parent = ReplicatedStorage})
-		Events.HandleVoxels.broadcast(voxels, cframe, power)
+		Events.Voxels.HandleVoxels.broadcast(voxels, cframe, power)
 
 		// Destroy all voxels since the client will handel them
 		voxels.forEach((voxel: Part) => {voxel.Destroy()})

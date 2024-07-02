@@ -30,7 +30,9 @@
 		"tsconfig.json": true,
 		"package-lock.json": true,
 		".eslintrc": true,
-		"aftman.toml": true
+		"aftman.toml": true,
+		"out": true,
+		"default.project.json": true
 	},
 	"explorerExclude.backup": {}
 }
