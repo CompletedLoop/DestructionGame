@@ -10,8 +10,7 @@ export class DestructionClient implements OnStart {
 			this.handleVoxels(replicated_voxels, cframe, power))
 
 		{}
-		(ReplicatedStorage.COMMUNICATION.WaitForChild("ClearVoxels") as RemoteEvent).OnClientEvent.Connect(() =>
-		Workspace.FX.Voxels.ClearAllChildren())
+		Events.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
 	}
 
 	handleVoxels(replicated_voxels: Part[], cframe: CFrame, power: number) {
