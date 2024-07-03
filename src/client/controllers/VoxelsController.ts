@@ -48,7 +48,7 @@ export class DestructionClient implements OnStart {
 			this.applyForceToVoxel(voxel, cframe, power)
 		})
 
-		// Freeze voxels after a brief moment to optimize
+		// Freeze voxels after a moment to optimize
 		task.delay(4, () => {
 			voxels.forEach((voxel: Part) => {
 				voxel.Anchored = true

@@ -1,7 +1,7 @@
 import { Service, OnStart, OnInit } from "@flamework/core";
 import { Events } from "server/network";
 import { plr } from "types/plr";
-import { DestructionModule } from "../Modules/VoxelsServer";
+import { DestructionModule } from "../ServerModules/VoxelsServer";
 import { Players } from "services";
 import VoxelDestruct from "shared/Luau/VoxelDestruct";
 
