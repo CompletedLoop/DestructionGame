@@ -9,12 +9,12 @@ class DestructionModuleClass {
 		return voxels
 	}
 
-	PassVoxelsToClients(voxels: Part[], cframe: CFrame, power: number) {
+	PassVoxelsToClients(voxels: Part[], radius: number, cframe: CFrame, power: number) {
 		if (voxels.size() < 1) {return}
 
 		// Replicate over the voxels
 		voxels.forEach((voxel: Part) => {voxel.CanCollide = false;voxel.Parent = ReplicatedStorage})
-		Events.Voxels.HandleVoxels.broadcast(voxels, cframe, power)
+		Events.Voxels.HandleVoxels.broadcast(voxels, radius, cframe, power)
 
 		// Destroy all voxels since the client will handel them
 		voxels.forEach((voxel: Part) => {voxel.Destroy()})
