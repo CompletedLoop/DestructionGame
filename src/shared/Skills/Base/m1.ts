@@ -1,10 +1,12 @@
 import { ReplicatedStorage, RunService } from "services";
 import { AnyStatus, Message, Skill, SkillDecorator, StatusEffect } from "@rbxts/wcs";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
+import { VoxelModule } from "server/ServerModules/VoxelsModule";
 import { Blocking } from "shared/StatusEffects/Blocking";
 import { Stun } from "shared/StatusEffects/Stun";
 import { Ragdolled } from "shared/StatusEffects/Ragdolled";
 import { Attacking } from "shared/StatusEffects/Attacking";
+import { character } from "types/character";
 
 const m1_anims = ReplicatedStorage.Animations.m1s
 
@@ -53,9 +55,19 @@ export class m1 extends Skill {
 	
 	public OnStartServer(): void {
 		if (this.Character.Humanoid.Health < 1) this.End()
-
+			
 		let last_m1 = tick() - this.last_m1
 		if (last_m1 >= 1.5) {this.set_combo(1)}
+		
+		let cooldown = .45	
+		if (this.combo === m1_anims.GetChildren().size()) {
+			let root_cf = (this.Character.Instance as character).HumanoidRootPart.CFrame
+			let target = root_cf.Position.mul(root_cf.LookVector.mul(3))
+			let cf = CFrame.lookAlong(target, root_cf.LookVector)
+
+			let voxels = VoxelModule.VoxelizeInRadius(5, cf, 3)
+			VoxelModule.PassVoxelsToClients(voxels, 5, cf, 2)
+		}
 
 		this.last_m1 = tick()
 		this.attackingSE.Start()
@@ -70,7 +82,7 @@ export class m1 extends Skill {
 		})
 		
 		this.m1_accepted(this.combo)
-		this.ApplyCooldown(.45)
+		this.ApplyCooldown(cooldown)
 	}
 
 	private set_combo(value: number): void {

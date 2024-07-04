@@ -1,9 +1,9 @@
 import { Events } from "server/network";
-import VoxBreaker from "shared/Luau/VoxBreaker"
 import { ReplicatedStorage } from "services";
 import { Constants } from "shared/Constants";
+import VoxBreaker from "shared/Luau/VoxBreaker"
 
-class DestructionModuleClass {
+class VoxelModuleClass {
 	VoxelizeInRadius(radius: number, cframe: CFrame, voxel_size: number) {
 		let voxels = VoxBreaker.CreateHitbox(Vector3.one.mul(radius), cframe, Enum.PartType.Ball, voxel_size, Constants.VOXEL_LIFETIME)
 		return voxels
@@ -21,4 +21,4 @@ class DestructionModuleClass {
 	}
 }
 
-export const DestructionModule = new DestructionModuleClass()
+export const VoxelModule = new VoxelModuleClass()

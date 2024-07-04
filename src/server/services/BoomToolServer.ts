@@ -1,7 +1,7 @@
 import { Service, OnStart, OnInit } from "@flamework/core";
 import { Events } from "server/network";
 import { plr } from "types/plr";
-import { DestructionModule } from "../ServerModules/VoxelsServer";
+import { VoxelModule } from "../ServerModules/VoxelsModule";
 import { Players } from "services";
 import VoxelDestruct from "shared/Luau/VoxelDestruct";
 
@@ -19,8 +19,8 @@ export class BoomToolServer implements OnStart {
 			// })
 
 
-			let voxels = DestructionModule.VoxelizeInRadius(radius, cframe, 3)
-			DestructionModule.PassVoxelsToClients(voxels, radius, cframe, power)
+			let voxels = VoxelModule.VoxelizeInRadius(radius, cframe, 3)
+			VoxelModule.PassVoxelsToClients(voxels, radius, cframe, power)
 		})
 	}
 }
