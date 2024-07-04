@@ -82,7 +82,7 @@ export class DestructionClient implements OnStart {
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power: number) {
 		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul((-40 * (voxel.Mass/2)))
 		velocity = velocity.mul(new Vector3(1, 2, 1).mul(power))
-		// voxel.AssemblyLinearVelocity = velocity.div(1)
-		voxel.ApplyImpulse(velocity)
+		voxel.AssemblyLinearVelocity = velocity.div(1)
+		// voxel.ApplyImpulse(velocity)
 	}
 }

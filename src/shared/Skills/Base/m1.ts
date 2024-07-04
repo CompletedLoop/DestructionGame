@@ -1,14 +1,16 @@
 import { ReplicatedStorage, RunService } from "services";
 import { AnyStatus, Message, Skill, SkillDecorator, StatusEffect } from "@rbxts/wcs";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
-import { VoxelModule } from "server/ServerModules/VoxelsModule";
 import { Blocking } from "shared/StatusEffects/Blocking";
 import { Stun } from "shared/StatusEffects/Stun";
 import { Ragdolled } from "shared/StatusEffects/Ragdolled";
 import { Attacking } from "shared/StatusEffects/Attacking";
 import { character } from "types/character";
+import { Dependency } from "@flamework/core"
+import type { VoxelService } from "server/services/VoxelService";;
 
 const m1_anims = ReplicatedStorage.Animations.m1s
+
 
 interface Metadata {
 	Combo: number
@@ -21,16 +23,17 @@ export class m1 extends Skill {
 		Stun, Blocking, Ragdolled, Attacking
 	];
 	///////////////////////////////////////////////////////////////////////////////////////////////
-
+	
 	combo: number = 1
 	protected OnConstruct(): void {
 		
 	}
-
+	
 	last_m1: number = 0
 	attackingSE: StatusEffect = new Attacking(this.Character)
+	voxelService!: VoxelService
 	protected OnConstructServer(): void {
-
+		this.voxelService = Dependency<VoxelService>()
 	}
 
 	m1_anims!: AnimationTrack[]
@@ -62,11 +65,13 @@ export class m1 extends Skill {
 		let cooldown = .45	
 		if (this.combo === m1_anims.GetChildren().size()) {
 			let root_cf = (this.Character.Instance as character).HumanoidRootPart.CFrame
-			let target = root_cf.Position.mul(root_cf.LookVector.mul(3))
+			let target = root_cf.Position.add(root_cf.LookVector.mul(3)).add(new Vector3(0, 1, 0))
 			let cf = CFrame.lookAlong(target, root_cf.LookVector)
 
-			let voxels = VoxelModule.VoxelizeInRadius(5, cf, 3)
-			VoxelModule.PassVoxelsToClients(voxels, 5, cf, 2)
+			let voxels = this.voxelService.VoxelizeInRadius(7, cf, 2)
+			this.voxelService.PassVoxelsToClients(voxels, 5, cf, 4)
+
+			cooldown = 1
 		}
 
 		this.last_m1 = tick()

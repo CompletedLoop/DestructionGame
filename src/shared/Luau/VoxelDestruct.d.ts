@@ -1,6 +1,6 @@
-interface VoxelModule {
+interface VoxelDestruct {
 	DestroyInRadius(this: void, radius: number, cframe: CFrame): Part[]
 }
 
-declare const VoxelModule: VoxelModule
-export = VoxelModule
+declare const VoxelDestruct: VoxelDestruct
+export = VoxelDestruct
