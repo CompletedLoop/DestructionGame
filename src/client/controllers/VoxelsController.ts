@@ -2,6 +2,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Workspace, ReplicatedStorage, TweenService } from "services";
 import { Constants } from "shared/Constants";
+import { VoxelInfoPacket } from "types/VoxelInfoPacket";
 
 let oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
@@ -14,14 +15,14 @@ export class DestructionClient implements OnStart {
 		Events.Voxels.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
 	}
 
-	handleVoxels(replicated_voxels: Part[], radius: number, cframe: CFrame, power: number) {
-		let voxel_holder = this.cloneReplicatedVoxels(replicated_voxels)
+	handleVoxels(voxel_packet: VoxelInfoPacket) {
+		let voxel_holder = this.cloneReplicatedVoxels(voxel_packet.voxels)
 		let voxels = voxel_holder.GetChildren() as Part[]
 
 		let voxel_count = 0
 
 		// Get surrounding voxels
-		let result = Workspace.GetPartBoundsInRadius(cframe.Position, radius, oparams) as Part[]
+		let result = Workspace.GetPartBoundsInRadius(voxel_packet.origin.Position, voxel_packet.radius, oparams) as Part[]
 		if (result) {
 			result.forEach((voxel: Part) => {
 				if (voxel.GetAttribute("_voxel")) {
@@ -45,7 +46,11 @@ export class DestructionClient implements OnStart {
 
 			voxel.SetAttribute("_voxel", true)
 
-			this.applyForceToVoxel(voxel, cframe, power)
+			if (voxel_packet.velocity === "default") {
+				this.applyForceToVoxel(voxel, voxel_packet.origin, voxel_packet.power)
+			} else {
+				voxel.AssemblyLinearVelocity = voxel_packet.velocity
+			}
 		})
 
 		// Freeze voxels after a moment to optimize
@@ -71,6 +76,8 @@ export class DestructionClient implements OnStart {
 
 	cloneReplicatedVoxels(voxels: Part[]): Model {
 		let voxel_holder = new Instance("Model")
+		if (voxels.size() < 1) return voxel_holder
+
 		voxels.forEach((voxel: Part) => {
 			let voxel_clone = voxel.Clone()
 			voxel_clone.Parent = voxel_holder
@@ -79,9 +86,10 @@ export class DestructionClient implements OnStart {
 		return voxel_holder
 	}
 
-	applyForceToVoxel(voxel: Part, cframe: CFrame, power: number) {
+	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {
 		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul((-40 * (voxel.Mass/2)))
-		velocity = velocity.mul(new Vector3(1, 2, 1).mul(power))
+		velocity = velocity.mul(new Vector3(1, 2, 1))
+		if (power) velocity = velocity.mul(power)
 		voxel.AssemblyLinearVelocity = velocity.div(1)
 		// voxel.ApplyImpulse(velocity)
 	}

@@ -1,4 +1,5 @@
 import { Networking } from "@flamework/networking";
+import { VoxelInfoPacket } from "types/VoxelInfoPacket";
 
 interface ClientToServerEvents {
 	BoomTool(cframe: CFrame, radius: number, power: number): void
@@ -6,7 +7,7 @@ interface ClientToServerEvents {
 
 interface ServerToClientEvents {
 	Voxels: {
-		HandleVoxels(voxels: Part[], radius: number, cframe: CFrame, power: number): void
+		HandleVoxels(voxel_packet: VoxelInfoPacket): void
 		ClearVoxels(): void
 	}
 }

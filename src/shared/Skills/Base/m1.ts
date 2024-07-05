@@ -7,10 +7,9 @@ import { Ragdolled } from "shared/StatusEffects/Ragdolled";
 import { Attacking } from "shared/StatusEffects/Attacking";
 import { character } from "types/character";
 import { Dependency } from "@flamework/core"
-import type { VoxelService } from "server/services/VoxelService";;
+import type { VoxelService } from "server/services/VoxelService";
 
 const m1_anims = ReplicatedStorage.Animations.m1s
-
 
 interface Metadata {
 	Combo: number
@@ -41,6 +40,7 @@ export class m1 extends Skill {
 		// Load animations
 		const animator = this.Character.Humanoid.FindFirstChildOfClass("Animator") as Animator
 		RunService.Stepped.Wait()
+		RunService.Stepped.Wait()
 
 		this.m1_anims = []
 		m1_anims.GetChildren().forEach((m1) => {
@@ -68,8 +68,8 @@ export class m1 extends Skill {
 			let target = root_cf.Position.add(root_cf.LookVector.mul(3)).add(new Vector3(0, 1, 0))
 			let cf = CFrame.lookAlong(target, root_cf.LookVector)
 
-			let voxels = this.voxelService.VoxelizeInRadius(7, cf, 2)
-			this.voxelService.PassVoxelsToClients(voxels, 5, cf, 4)
+			let voxel_packet = this.voxelService.VoxelizeInRadius(7, cf, 2)
+			this.voxelService.PassVoxelsToClients(voxel_packet)
 
 			cooldown = 1
 		}
@@ -104,7 +104,7 @@ export class m1 extends Skill {
 	
 	@Message({Type: "Event", Destination: "Client"})
 	protected m1_accepted(combo: number) {
-		print(`Combo: ${combo}`)
+		// print(`Combo: ${combo}`)
 
 		let anim = this.m1_anims[combo - 1]
 		if (anim) {
