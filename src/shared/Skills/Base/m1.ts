@@ -69,6 +69,7 @@ export class m1 extends Skill {
 			let cf = CFrame.lookAlong(target, root_cf.LookVector)
 
 			let voxel_packet = this.voxelService.VoxelizeInRadius(7, cf, 2)
+			voxel_packet.velocity = (this.Character.Instance as character).HumanoidRootPart.CFrame.LookVector.mul(20)
 			this.voxelService.PassVoxelsToClients(voxel_packet)
 
 			cooldown = 1
