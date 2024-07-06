@@ -212,7 +212,7 @@ local rs = game:GetService("RunService")
 
 local TagName = "Destroyable" --Name of Attribute that module will check parts for
 local RandomColors = false  -- Will make every part a random color. Set this to true if you want a visual representation of how the parts are being divided.
-local Visualizer = false -- Will make hitboxes visible when set to true
+local Visualizer = false -- Will make hitboxes visible when set to true.
 local miniumCubeSize = 5 --Default Minimum possible size that divided cubes can be.
 local voxelFolder = workspace.FX.Voxels --Where the voxels are stored. Workspace by default.
 local AutoStartMoveable = false --Toggle this to true if you want your moveable hitboxes to activate automatically without having to use :Start()

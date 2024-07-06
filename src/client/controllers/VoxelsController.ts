@@ -2,11 +2,14 @@ import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Workspace, ReplicatedStorage, TweenService } from "services";
 import { Constants } from "shared/Constants";
+import LoggerClass from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/VoxelInfoPacket";
 
 let oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
 oparams.FilterType = Enum.RaycastFilterType.Include
+
+const logger = new LoggerClass("VoxelsController", "Braces")
 
 @Controller({})
 export class DestructionClient implements OnStart {
@@ -26,7 +29,7 @@ export class DestructionClient implements OnStart {
 		if (result) {
 			result.forEach((voxel: Part) => {
 				if (voxel.GetAttribute("_voxel")) {
-					voxels.insert(1, voxel)
+					voxels.push(voxel)
 				}
 			})
 		}
@@ -44,6 +47,12 @@ export class DestructionClient implements OnStart {
 			voxel.CanCollide = true
 			if (!voxel.GetAttribute("_voxel")) voxel.Size = voxel.Size.mul(.95)
 
+			voxel.CustomPhysicalProperties = new PhysicalProperties(
+				voxel.CurrentPhysicalProperties.Density,
+				0.2,
+				voxel.CurrentPhysicalProperties.Elasticity
+			)
+
 			voxel.SetAttribute("_voxel", true)
 
 			if (voxel_packet.velocity === "default") {
@@ -53,10 +62,12 @@ export class DestructionClient implements OnStart {
 			}
 		})
 
+		logger.log(`Processed ${voxels.size()} voxels`)
+
 		// Freeze voxels after a moment to optimize
 		task.delay(4, () => {
 			voxels.forEach((voxel: Part) => {
-				voxel.Anchored = true
+				// voxel.Anchored = true
 			})
 		})
 
@@ -87,7 +98,7 @@ export class DestructionClient implements OnStart {
 	}
 
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {
-		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul((-40 * (voxel.Mass/2)))
+		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul((-10 * (voxel.Mass)))
 		velocity = velocity.mul(new Vector3(1, 2, 1))
 		if (power) velocity = velocity.mul(power)
 		voxel.AssemblyLinearVelocity = velocity.div(1)
