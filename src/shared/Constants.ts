@@ -1,4 +1,4 @@
 export const Constants = {
 	VOXEL_LIFETIME: 30,
-	MAX_DEBRIS: 101,
+	MAX_DEBRIS: 70,
 }

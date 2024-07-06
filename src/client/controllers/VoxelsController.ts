@@ -9,7 +9,11 @@ const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
 oparams.FilterType = Enum.RaycastFilterType.Include
 
-const log = new LogClass("VoxelsController").Logger
+const debug = false
+const log = new LogClass("VoxelsController", "Brackets", () => {
+	if (debug) return true
+	else return false
+}).Logger
 
 @Controller({})
 export class DestructionClient implements OnStart {
@@ -52,7 +56,7 @@ export class DestructionClient implements OnStart {
 
 			voxel.CustomPhysicalProperties = new PhysicalProperties(
 				voxel.CurrentPhysicalProperties.Density,
-				0.2,
+				0.3,
 				voxel.CurrentPhysicalProperties.Elasticity
 			)
 
@@ -68,11 +72,11 @@ export class DestructionClient implements OnStart {
 		log(`Processed ${voxels.size()} voxels`)
 
 		// Freeze voxels after a moment to optimize
-		task.delay(4, () => {
-			voxels.forEach((voxel: Part) => {
-				// voxel.Anchored = true
-			})
-		})
+		// task.delay(.2, () => {
+		// 	voxels.forEach((voxel: Part) => {
+		// 		voxel.Anchored = true
+		// 	})
+		// })
 
 		// Fade voxels out
 		task.delay(Constants.VOXEL_LIFETIME, () => {
