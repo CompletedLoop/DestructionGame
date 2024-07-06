@@ -1,23 +1,52 @@
-class LoggerClass {
-	Name: string
-	Decorators: string[]
-	constructor(Name: string, Decorator?: "Brackets" | "Braces") {
-		this.Name = Name
-		this.Decorators = ["[", "]"]
-		if (Decorator === "Braces") {
-			this.Decorators = ["{", "}"]
-		}
-	}
+interface LogOptions {
+	MessageType?: Enum.MessageType,
+	BypassHooks?: boolean,
+	NewHook?: Hook
+}
+type Hook = (Message?: string, LogOptions?: LogOptions) => boolean
 
-	log(message: string, message_type?: Enum.MessageType) {
-		const output_message = `${this.Decorators[0]}${this.Name}${this.Decorators[1]}: ${message}`
-		if (!message_type) print(output_message)
-		else if (message_type === Enum.MessageType.MessageOutput) print(output_message)
-		else if (message_type === Enum.MessageType.MessageWarning) warn(output_message)
-		else if (message_type === Enum.MessageType.MessageError) error(output_message)
+let GlobalHook: Hook = (Message, MessageType) => {return true}
+
+/**
+ * @param Name 
+ * @param Decorator 
+ * @param Hook 
+ * @returns A function that takes in a Message and an optional LogOptions argument 
+ */
+export function Logger(Name: string, Decorator?: "Brackets" | "Braces" | "DollarSign" | string, Hook?: Hook) {
+	let tag: string = `` 
+	if (!Decorator || Decorator === "Brackets") tag = `[${Name}]: `
+	else if (!Decorator || Decorator === "Braces") tag = `{${Name}}: `
+	else if (!Decorator || Decorator === "DollarSign") tag = `$${Name}: `
+	else tag = Decorator
+
+	let CurrentHook = Hook
+	
+	return (Message?: string, LogOptions?: LogOptions) => {
+		let BypassHooks = false
+		let MessageType = Enum.MessageType.MessageOutput as Enum.MessageType
+		if (LogOptions){
+			if (LogOptions.MessageType) MessageType = LogOptions.MessageType
+			if (LogOptions.BypassHooks) BypassHooks = true
+			if (LogOptions.NewHook) CurrentHook = LogOptions.NewHook
+		}
+
+		if (!BypassHooks) {
+			if (!GlobalHook(Message, LogOptions)) return
+			if (CurrentHook) 
+				if (!CurrentHook(Message, LogOptions)) return
+		}
+
+		const OutputMessage = `${tag}${Message}`
+		if (MessageType === Enum.MessageType.MessageOutput) print(OutputMessage)
+		else if (MessageType === Enum.MessageType.MessageWarning) warn(OutputMessage)
+		else if (MessageType === Enum.MessageType.MessageError) error(OutputMessage)
 	}
 }
 
-
-
-export = LoggerClass
+/**
+ * @param Hook The Global Hook that runs before any message is logged
+ */
+export function SetGlobalHook(Hook: Hook) {
+	GlobalHook = Hook
+}
