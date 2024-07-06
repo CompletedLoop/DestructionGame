@@ -22,6 +22,9 @@ export function Logger(Name: string, Decorator?: "Brackets" | "Braces" | "Dollar
 
 	let CurrentHook = Hook
 	
+	/**
+	 * Log a message to the output with optional LogOptions
+	 */
 	return (Message?: string, LogOptions?: LogOptions) => {
 		let BypassHooks = false
 		let MessageType = Enum.MessageType.MessageOutput as Enum.MessageType

@@ -22,6 +22,7 @@ export class BoomToolServer implements OnStart {
 
 
 			let voxel_packet = this.voxelsService.VoxelizeInRadius(radius, cframe, 3)
+			voxel_packet.power = power
 			this.voxelsService.PassVoxelsToClients(voxel_packet)
 		})
 	}

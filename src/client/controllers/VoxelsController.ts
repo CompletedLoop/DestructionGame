@@ -2,12 +2,14 @@ import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Workspace, ReplicatedStorage, TweenService } from "services";
 import { Constants } from "shared/Constants";
+import { Logger } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/VoxelInfoPacket";
 
-let oparams = new OverlapParams()
+const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
 oparams.FilterType = Enum.RaycastFilterType.Include
 
+const log = Logger("VoxelsController")
 
 @Controller({})
 export class DestructionClient implements OnStart {
@@ -23,7 +25,10 @@ export class DestructionClient implements OnStart {
 		let voxel_count = 0
 
 		// Get surrounding voxels
-		let result = Workspace.GetPartBoundsInRadius(voxel_packet.origin.Position, voxel_packet.radius, oparams) as Part[]
+		let result = Workspace.GetPartBoundsInRadius(
+			voxel_packet.origin.Position,
+			voxel_packet.radius, oparams
+		) as Part[]
 		if (result) {
 			result.forEach((voxel: Part) => {
 				if (voxel.GetAttribute("_voxel")) {
@@ -42,12 +47,12 @@ export class DestructionClient implements OnStart {
 			voxel_count += 1
 
 			voxel.Anchored = false
-			// voxel.CanCollide = true
+			voxel.CanCollide = true
 			if (!voxel.GetAttribute("_voxel")) voxel.Size = voxel.Size.mul(.95)
 
 			voxel.CustomPhysicalProperties = new PhysicalProperties(
 				voxel.CurrentPhysicalProperties.Density,
-				0.1,
+				0.2,
 				voxel.CurrentPhysicalProperties.Elasticity
 			)
 
@@ -60,7 +65,7 @@ export class DestructionClient implements OnStart {
 			}
 		})
 
-		// logger.log(`Processed ${voxels.size()} voxels`)
+		log(`Processed ${voxels.size()} voxels`, {MessageType: Enum.MessageType.MessageWarning})
 
 		// Freeze voxels after a moment to optimize
 		task.delay(4, () => {
@@ -97,9 +102,9 @@ export class DestructionClient implements OnStart {
 
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {
 		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul((-10 * (voxel.Mass)))
-		velocity = velocity.mul(new Vector3(1, 2, 1))
-		if (power) velocity = velocity.mul(power)
-		voxel.AssemblyLinearVelocity = velocity.div(1)
+		if (power) velocity = velocity.mul(power || 1)
+		velocity = velocity.add(new Vector3(0, 2, 0))
+		voxel.AssemblyLinearVelocity = velocity
 		// voxel.ApplyImpulse(velocity)
 	}
 }

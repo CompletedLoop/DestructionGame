@@ -899,8 +899,8 @@ function VoxBreaker:CreateHitbox(Size : Vector3, Cframe : CFrame , Shape : Enum.
 		minimum = largest * ratio
 	end
 
-	if Visualizer then
-		part.Parent = game.Workspace
+	if workspace.GameConfig:GetAttribute("Show_Hitboxes") then
+		part.Parent = game.Workspace.FX.Hitboxes
 	end
 	
 	make_debris_sounds(part, Params)
@@ -981,8 +981,8 @@ function VoxBreaker.CreateMoveableHitbox(MinimumVoxelSize : number, TimeToReset 
 	part.Material = Enum.Material.Neon
 	part.Color = Color3.fromRGB(255, 0, 0)
 
-	if Visualizer then
-		part.Parent = game.Workspace
+	if workspace.GameConfig:GetAttribute("Show_Hitboxes") then
+		part.Parent = game.Workspace.FX.Hitboxes
 	end
 
 	task.spawn(function()
