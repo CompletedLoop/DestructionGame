@@ -1,16 +1,22 @@
-type Hook = (This: LogClass, Message?: string) => boolean
-
-interface LogOptions {
+export interface LogOptions {
 	BypassHooks?: boolean,
-	NewHook?: Hook,
+	Hook?: Hook,
 	Tag?: string
 }
 
-interface Logger {
-	(Message: string, LogOptions?: LogOptions): void,
-	warn(Message: string, LogOptions?: LogOptions): void,
-	error(Message: string, Level?: number, LogOptions?: LogOptions): void,
+export interface Logger {
+	(...args: ArgumentTypes): void,
+	warn(...args: ArgumentTypes): void,
+	error(...args: ArgumentTypes): void,
 }
+
+export type Hook = (This: LogClass, Message?: string) => boolean | undefined
+type ArgumentTypes = [Message: string, LogOptions?: LogOptions]
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const MessageOutput = Enum.MessageType.MessageOutput
+const MessageWarning = Enum.MessageType.MessageWarning
+const MessageError = Enum.MessageType.MessageError
 
 export class LogClass {
 	Logger!: Logger
@@ -21,48 +27,36 @@ export class LogClass {
 
 	constructor(Name: string, Decorator?: "Brackets" | "Braces" | "DollarSign" | string, Hook?: Hook) {
 		this.Name = Name
-		if (Decorator) this.Decorator = Decorator
-		if (Hook) this.Hook = Hook
+		this.Decorator = Decorator || this.Decorator
+		this.Hook = Hook || this.Hook
 
 		this.Logger = setmetatable({
-			warn: (t: Logger, Message: string, LogOptions?: LogOptions) => {
-				this.warn(Message, LogOptions)
-			},
-			error: (t: Logger, Message: string, Level?: number, LogOptions?: LogOptions) => {
-				this.error(Message, Level, LogOptions)
-			},
+			warn: (t: Logger, ...args: ArgumentTypes) => this.process(MessageWarning, args[0], args[1]),
+			error: (t: Logger, ...args: ArgumentTypes) => this.process(MessageError, args[0], args[1]),
 		}, {
-			__call: (t, ...args) => {
-				this.log(args[0] as string, args[1] as LogOptions | undefined)
+			__call: (t, ...[args]) => { // Argument types have to be written this way for some reason
+				this.process(MessageOutput, args as any)
 			}
 		}) as unknown as Logger
 	}
 
-	public log(Message: string, LogOptions?: LogOptions) {
-		if (!this.process(Message, LogOptions)) return
-		print(`${this.getTag()}${Message}`)
-	}
+	private process(MessageType: Enum.MessageType, Message: string, LogOptions?: LogOptions) {
+		let CurrentTag = this.getTag()
+		let CurrentHook = this.Hook
 
-	public warn(Message: string, LogOptions?: LogOptions) {
-		if (!this.process(Message, LogOptions)) return
-		warn(`${this.getTag()}${Message}`)
-	}
-
-	public error(Message: string, Level?: number, LogOptions?: LogOptions) {
-		if (!this.process(Message, LogOptions)) return
-		error(`${this.getTag()}${Message}`, Level)
-	}
-
-	private process(Message: string, LogOptions?: LogOptions) {
 		if (LogOptions) {
-			if (LogOptions.BypassHooks) return true
-			if (LogOptions.NewHook) this.Hook = LogOptions.NewHook
-			if (LogOptions.Tag) this.Decorator = LogOptions.Tag
+			CurrentTag = LogOptions.Tag || CurrentTag
+			CurrentHook = LogOptions.Hook || CurrentHook
+			if (!LogOptions.BypassHooks) {
+				if (!GlobalHook(this, Message)) return
+				if (!CurrentHook(this, Message)) return
+			}
 		}
 
-		if (!GlobalHook(this, Message)) return false
-		if (!this.Hook(this, Message)) return false
-		return true
+		const FinalMessage = `${CurrentTag}${Message}`
+		if (!MessageType || MessageType === MessageOutput) print(FinalMessage)
+		else if (MessageType === MessageWarning) warn(FinalMessage)
+		else if (MessageType === MessageError) error(FinalMessage, 2)
 	}
 
 	private getTag(): string {
@@ -73,6 +67,7 @@ export class LogClass {
 	}
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 let GlobalHook: Hook = (This, Message) => {return true}
 
 /**
