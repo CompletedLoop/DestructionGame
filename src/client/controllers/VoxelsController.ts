@@ -2,14 +2,14 @@ import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Workspace, ReplicatedStorage, TweenService } from "services";
 import { Constants } from "shared/Constants";
-import { Logger } from "shared/Modules/Logger";
+import { LogClass } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/VoxelInfoPacket";
 
 const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
 oparams.FilterType = Enum.RaycastFilterType.Include
 
-const log = Logger("VoxelsController")
+const log = new LogClass("VoxelsController").Logger
 
 @Controller({})
 export class DestructionClient implements OnStart {
@@ -64,8 +64,8 @@ export class DestructionClient implements OnStart {
 				voxel.AssemblyLinearVelocity = voxel_packet.velocity
 			}
 		})
-
-		log(`Processed ${voxels.size()} voxels`, {MessageType: Enum.MessageType.MessageWarning})
+		
+		log(`Processed ${voxels.size()} voxels`)
 
 		// Freeze voxels after a moment to optimize
 		task.delay(4, () => {

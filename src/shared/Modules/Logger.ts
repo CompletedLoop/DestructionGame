@@ -1,51 +1,79 @@
+type Hook = (This: LogClass, Message?: string) => boolean
+
 interface LogOptions {
-	MessageType?: Enum.MessageType,
 	BypassHooks?: boolean,
-	NewHook?: Hook
+	NewHook?: Hook,
+	Tag?: string
 }
-type Hook = (Message?: string, LogOptions?: LogOptions) => boolean
 
-let GlobalHook: Hook = (Message, MessageType) => {return true}
+interface Logger {
+	(Message: string, LogOptions?: LogOptions): void,
+	warn(Message: string, LogOptions?: LogOptions): void,
+	error(Message: string, Level?: number, LogOptions?: LogOptions): void,
+}
 
-/**
- * @param Name 
- * @param Decorator 
- * @param Hook 
- * @returns A function that takes in a Message and an optional LogOptions argument 
- */
-export function Logger(Name: string, Decorator?: "Brackets" | "Braces" | "DollarSign" | string, Hook?: Hook) {
-	let tag: string = `` 
-	if (!Decorator || Decorator === "Brackets") tag = `[${Name}]: `
-	else if (!Decorator || Decorator === "Braces") tag = `{${Name}}: `
-	else if (!Decorator || Decorator === "DollarSign") tag = `$${Name}: `
-	else tag = Decorator
+export class LogClass {
+	Logger!: Logger
 
-	let CurrentHook = Hook
-	
-	/**
-	 * Log a message to the output with optional LogOptions
-	 */
-	return (Message?: string, LogOptions?: LogOptions) => {
-		let BypassHooks = false
-		let MessageType = Enum.MessageType.MessageOutput as Enum.MessageType
-		if (LogOptions){
-			if (LogOptions.MessageType) MessageType = LogOptions.MessageType
-			if (LogOptions.BypassHooks) BypassHooks = true
-			if (LogOptions.NewHook) CurrentHook = LogOptions.NewHook
+	Name: string
+	Decorator = "Brackets"
+	Hook: Hook = (Message, MessageType) => {return true}
+
+	constructor(Name: string, Decorator?: "Brackets" | "Braces" | "DollarSign" | string, Hook?: Hook) {
+		this.Name = Name
+		if (Decorator) this.Decorator = Decorator
+		if (Hook) this.Hook = Hook
+
+		this.Logger = setmetatable({
+			warn: (t: Logger, Message: string, LogOptions?: LogOptions) => {
+				this.warn(Message, LogOptions)
+			},
+			error: (t: Logger, Message: string, Level?: number, LogOptions?: LogOptions) => {
+				this.error(Message, Level, LogOptions)
+			},
+		}, {
+			__call: (t, ...args) => {
+				this.log(args[0] as string, args[1] as LogOptions | undefined)
+			}
+		}) as unknown as Logger
+	}
+
+	public log(Message: string, LogOptions?: LogOptions) {
+		if (!this.process(Message, LogOptions)) return
+		print(`${this.getTag()}${Message}`)
+	}
+
+	public warn(Message: string, LogOptions?: LogOptions) {
+		if (!this.process(Message, LogOptions)) return
+		warn(`${this.getTag()}${Message}`)
+	}
+
+	public error(Message: string, Level?: number, LogOptions?: LogOptions) {
+		if (!this.process(Message, LogOptions)) return
+		error(`${this.getTag()}${Message}`, Level)
+	}
+
+	private process(Message: string, LogOptions?: LogOptions) {
+		if (LogOptions) {
+			if (LogOptions.BypassHooks) return true
+			if (LogOptions.NewHook) this.Hook = LogOptions.NewHook
+			if (LogOptions.Tag) this.Decorator = LogOptions.Tag
 		}
 
-		if (!BypassHooks) {
-			if (!GlobalHook(Message, LogOptions)) return
-			if (CurrentHook) 
-				if (!CurrentHook(Message, LogOptions)) return
-		}
+		if (!GlobalHook(this, Message)) return false
+		if (!this.Hook(this, Message)) return false
+		return true
+	}
 
-		const OutputMessage = `${tag}${Message}`
-		if (MessageType === Enum.MessageType.MessageOutput) print(OutputMessage)
-		else if (MessageType === Enum.MessageType.MessageWarning) warn(OutputMessage)
-		else if (MessageType === Enum.MessageType.MessageError) error(OutputMessage)
+	private getTag(): string {
+		if (!this.Decorator || this.Decorator === "Brackets") return `[${this.Name}]: `
+		else if (!this.Decorator || this.Decorator === "Braces") return `{${this.Name}}: `
+		else if (!this.Decorator || this.Decorator === "DollarSign") return `$${this.Name}: `
+		else return this.Decorator
 	}
 }
+
+let GlobalHook: Hook = (This, Message) => {return true}
 
 /**
  * @param Hook The Global Hook that runs before any message is logged
