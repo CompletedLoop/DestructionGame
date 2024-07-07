@@ -8,7 +8,9 @@ import { Attacking } from "shared/StatusEffects/Attacking";
 import { character } from "types/character";
 import { Dependency } from "@flamework/core"
 import type { VoxelService } from "server/services/VoxelService";
+import { LogClass } from "shared/Modules/Logger";
 
+const log = new LogClass("M1").Logger
 const m1_anims = ReplicatedStorage.Animations.m1s
 
 interface Metadata {
@@ -47,6 +49,8 @@ export class m1 extends Skill {
 			let anim = animator.LoadAnimation(m1 as Animation)
 			anim.Priority = Enum.AnimationPriority.Action3
 			this.m1_anims[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
+
+			anim.GetMarkerReachedSignal("Hitbox").Connect(() => this.Hitbox())
 		})
 
 		// Metadata
@@ -63,17 +67,7 @@ export class m1 extends Skill {
 		if (last_m1 >= 1.5) {this.set_combo(1)}
 		
 		let cooldown = .45	
-		if (this.combo === m1_anims.GetChildren().size()) {
-			let root_cf = (this.Character.Instance as character).HumanoidRootPart.CFrame
-			let target = root_cf.Position.add(root_cf.LookVector.mul(3)).add(new Vector3(0, 1, 0))
-			let cf = CFrame.lookAlong(target, root_cf.LookVector)
-
-			let voxel_packet = this.voxelService.VoxelizeInRadius(7, cf, 2)
-			voxel_packet.velocity = (this.Character.Instance as character).HumanoidRootPart.CFrame.LookVector.mul(20)
-			this.voxelService.PassVoxelsToClients(voxel_packet)
-
-			cooldown = 1
-		}
+		if (this.combo === m1_anims.GetChildren().size()) cooldown = 1
 
 		this.last_m1 = tick()
 		this.attackingSE.Start()
@@ -91,9 +85,22 @@ export class m1 extends Skill {
 		this.ApplyCooldown(cooldown)
 	}
 
+	@Message({Type: "Event", Destination: "Server"})
+	protected Hitbox() {
+		let root_cf = (this.Character.Instance as character).HumanoidRootPart.CFrame
+		let target = root_cf.Position.add(root_cf.LookVector.mul(4)).add(new Vector3(0, 1, 0))
+		let cf = CFrame.lookAlong(target, root_cf.LookVector)
+
+		if (this.combo === m1_anims.GetChildren().size()) {
+			let voxel_packet = this.voxelService.VoxelizeInRadius(5, cf, 2)
+			voxel_packet.velocity = (this.Character.Instance as character).HumanoidRootPart.CFrame.LookVector.mul(20)
+			this.voxelService.PassVoxelsToClients(voxel_packet)
+		}
+	}
+
 	private set_combo(value: number): void {
 		this.combo = value
-		// this.SetMetadata({Combo: this.combo} as never)
+		this.SetMetadata({Combo: this.combo} as never)
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,10 +108,9 @@ export class m1 extends Skill {
 		//
 	}
 
-	///////////////////////////////////////////////////////////////////////////////////////////////
 	@Message({Type: "Event", Destination: "Client"})
 	protected m1_accepted(combo: number) {
-		// print(`Combo: ${combo}`)
+		// log(`Combo: ${combo}`)
 
 		let anim = this.m1_anims[combo - 1]
 		if (anim) {
