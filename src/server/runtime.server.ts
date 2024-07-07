@@ -8,7 +8,6 @@ Server.RegisterDirectory(ReplicatedStorage.TS.Skills);
 Server.RegisterDirectory(ReplicatedStorage.TS.StatusEffects);
 Server.Start()
 
-Flamework.addPaths("src/server/components");
-Flamework.addPaths("src/server/services");
-Flamework.addPaths("src/shared/components");
+Flamework.addPaths("src/server/Components");
+Flamework.addPaths("src/server/Services");
 Flamework.ignite();

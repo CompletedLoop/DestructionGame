@@ -15,8 +15,6 @@ SetGlobalHook(() => {
 	if (Workspace.GameConfig.GetAttribute("Debug")) return true
 })
 
-Flamework.addPaths("src/client/components");
-Flamework.addPaths("src/client/controllers");
-Flamework.addPaths("src/shared/components");
-
+Flamework.addPaths("src/client/Components");
+Flamework.addPaths("src/client/Controllers");
 Flamework.ignite();
