@@ -1,0 +1,26 @@
+diff --git a/node_modules/@rbxts/wcs/out/source/client.lua b/node_modules/@rbxts/wcs/out/source/client.lua
+index 8fa4f56..9f7cab9 100644
+--- a/node_modules/@rbxts/wcs/out/source/client.lua
++++ b/node_modules/@rbxts/wcs/out/source/client.lua
+@@ -178,7 +178,7 @@ do
+ 			end
+ 			return returnedValue
+ 		end)
+-		logMessage(`Started Client successfully`)
++		-- logMessage(`Started Client successfully`)
+ 	end
+ 	function Client:_setupCharacterReplication()
+ 		local character
+diff --git a/node_modules/@rbxts/wcs/out/source/server.lua b/node_modules/@rbxts/wcs/out/source/server.lua
+index 27ff9e5..888b3c1 100644
+--- a/node_modules/@rbxts/wcs/out/source/server.lua
++++ b/node_modules/@rbxts/wcs/out/source/server.lua
+@@ -241,7 +241,7 @@ do
+ 		end)
+ 		setActiveHandler(self)
+ 		self._isActive = true
+-		logMessage(`Started Server successfully`)
++		-- logMessage(`Started Server successfully`)
+ 	end
+ 	function Server:IsActive()
+ 		return self._isActive

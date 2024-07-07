@@ -116,6 +116,6 @@ export class DestructionClient implements OnStart {
 				}
 			}
 		})
-		if (count > 0) log(count)
+		if (count > 0) log(`Anchored ${count} dormant voxels`)
 	}
 }
