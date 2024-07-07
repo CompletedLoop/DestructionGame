@@ -7,7 +7,7 @@ import { Ragdolled } from "shared/StatusEffects/Ragdolled";
 import { Attacking } from "shared/StatusEffects/Attacking";
 import { character } from "types/character";
 import { Dependency } from "@flamework/core"
-import type { VoxelService } from "server/services/VoxelService";
+import type { VoxelService } from "server/Services/VoxelService";
 import { LogClass } from "shared/Modules/Logger";
 
 const log = new LogClass("M1").Logger
