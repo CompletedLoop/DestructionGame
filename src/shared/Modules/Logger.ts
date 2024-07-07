@@ -10,8 +10,8 @@ export interface Logger {
 	error(...args: ArgumentTypes): void,
 }
 
-export type Hook = (This: LogClass, Message?: string) => boolean | undefined
-type ArgumentTypes = [Message: string, LogOptions?: LogOptions]
+export type Hook = (This: LogClass, Message?: unknown) => boolean | undefined
+type ArgumentTypes = [Message: unknown, LogOptions?: LogOptions]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const MessageOutput = Enum.MessageType.MessageOutput
@@ -40,7 +40,7 @@ export class LogClass {
 		}) as unknown as Logger
 	}
 
-	private process(MessageType: Enum.MessageType, Message: string, LogOptions?: LogOptions) {
+	private process(MessageType: Enum.MessageType, Message: unknown, LogOptions?: LogOptions) {
 		let CurrentTag = this.getTag()
 		let CurrentHook = this.Hook
 

@@ -1,9 +1,10 @@
-import { Workspace, ReplicatedStorage, TweenService } from "services";
+import { Workspace, ReplicatedStorage, TweenService, RunService } from "services";
 import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Constants } from "shared/Constants";
 import { LogClass } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/VoxelInfoPacket";
+import { TimedConnection } from "shared/Modules/TimedConnection";
 
 const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
@@ -16,6 +17,7 @@ export class DestructionClient implements OnStart {
 	onStart() {
 		Events.Voxels.HandleVoxels.connect((...args) => this.handleVoxels(...args))
 		Events.Voxels.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
+		new TimedConnection(RunService.Stepped, () => this.anchorDormantVoxels(), 1)
 	}
 
 	handleVoxels(voxel_packet: VoxelInfoPacket) {
@@ -96,8 +98,24 @@ export class DestructionClient implements OnStart {
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {
 		let velocity = CFrame.lookAt(cframe.Position, voxel.Position).LookVector.mul((10 * (voxel.Mass)))
 		if (power) velocity = velocity.mul(power || 1)
-		velocity = velocity.add(new Vector3(0, 2, 0))
+		velocity = velocity.add(new Vector3(0, 20, 0))
 		voxel.AssemblyLinearVelocity = velocity
 		// voxel.ApplyImpulse(velocity)
+	}
+
+	anchorDormantVoxels() {
+		let count = 0;
+		(Workspace.FX.Voxels.GetDescendants() as Part[]).forEach((voxel: Part) => {
+			if (voxel.GetAttribute("_voxel")) {
+				if (!voxel.Anchored){
+					if (voxel.AssemblyLinearVelocity.Magnitude < 5) {
+						voxel.Anchored = true
+						voxel.AssemblyLinearVelocity = Vector3.zero
+						count += 1
+					}
+				}
+			}
+		})
+		log(count)
 	}
 }
