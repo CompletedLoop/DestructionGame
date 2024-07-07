@@ -19,5 +19,10 @@ export class CharacterServer extends BaseComponent<{}, character> implements OnS
 
 		// Destroy when player dies
 		this.instance.Humanoid.Died.Connect(() => {WSC_Character.Destroy()})
+
+		// Add all character parts to collision group
+		this.instance.GetDescendants().forEach((part) => {
+			if (part.IsA("BasePart")) part.CollisionGroup = "Players"
+		})
 	}
 }

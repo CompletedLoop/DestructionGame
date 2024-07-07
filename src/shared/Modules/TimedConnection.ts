@@ -4,7 +4,7 @@ import Signal from "@rbxts/goodsignal"
  * A class to call a callback from a Signal only if a specified time has elapsed
  */
 export class TimedConnection {
-	connection: RBXScriptConnection | Signal
+	connection: RBXScriptConnection
 	sleep: number
 	timer: number
     constructor(event: RBXScriptSignal, callback: (...args: unknown[]) => void, sleep: number) {
@@ -19,4 +19,8 @@ export class TimedConnection {
             }
         })
     }
+
+	Destroy() {
+		this.connection.Disconnect()
+	}
 }

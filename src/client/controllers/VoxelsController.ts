@@ -34,7 +34,7 @@ export class DestructionClient implements OnStart {
 		if (result) {
 			result.forEach((voxel: Part) => {
 				if (voxel.GetAttribute("_voxel")) {
-					voxels.push(voxel)
+					voxels.insert(0, voxel)
 				}
 			})
 		}
@@ -69,7 +69,7 @@ export class DestructionClient implements OnStart {
 		
 		// log.warn(`Processed ${voxels.size()} voxels`)
 
-		// Fade voxels out
+		// Fade voxels out and destroy
 		task.delay(Constants.VOXEL_LIFETIME, () => {
 			if (!voxel_holder) return
 
@@ -116,6 +116,6 @@ export class DestructionClient implements OnStart {
 				}
 			}
 		})
-		log(count)
+		if (count > 0) log(count)
 	}
 }
