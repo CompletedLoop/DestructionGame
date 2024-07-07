@@ -65,14 +65,7 @@ export class DestructionClient implements OnStart {
 			}
 		})
 		
-		log.warn(`Processed ${voxels.size()} voxels`)
-
-		// Freeze voxels after a moment to optimize
-		// task.delay(.2, () => {
-		// 	voxels.forEach((voxel: Part) => {
-		// 		voxel.Anchored = true
-		// 	})
-		// })
+		// log.warn(`Processed ${voxels.size()} voxels`)
 
 		// Fade voxels out
 		task.delay(Constants.VOXEL_LIFETIME, () => {
@@ -101,7 +94,7 @@ export class DestructionClient implements OnStart {
 	}
 
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {
-		let velocity = CFrame.lookAt(voxel.Position, cframe.Position).LookVector.mul((-10 * (voxel.Mass)))
+		let velocity = CFrame.lookAt(cframe.Position, voxel.Position).LookVector.mul((10 * (voxel.Mass)))
 		if (power) velocity = velocity.mul(power || 1)
 		velocity = velocity.add(new Vector3(0, 2, 0))
 		voxel.AssemblyLinearVelocity = velocity

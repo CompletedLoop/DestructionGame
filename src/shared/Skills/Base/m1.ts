@@ -21,8 +21,8 @@ export class m1 extends Skill {
 	protected MutualExclusives: Constructor<AnyStatus>[] = [
 		Stun, Blocking, Ragdolled, Attacking
 	];
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	
 	combo: number = 1
 	protected OnConstruct(): void {
 		
@@ -54,8 +54,8 @@ export class m1 extends Skill {
 			this.combo = (data as unknown as Metadata).Combo
 		})
 	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	
 	public OnStartServer(): void {
 		if (this.Character.Humanoid.Health < 1) this.End()
 			
@@ -95,14 +95,13 @@ export class m1 extends Skill {
 		this.combo = value
 		// this.SetMetadata({Combo: this.combo} as never)
 	}
-	///////////////////////////////////////////////////////////////////////////////////////////////
 
-	
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	public OnStartClient(): void {
 		//
 	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	
 	@Message({Type: "Event", Destination: "Client"})
 	protected m1_accepted(combo: number) {
 		// print(`Combo: ${combo}`)
