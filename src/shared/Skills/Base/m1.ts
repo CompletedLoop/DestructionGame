@@ -9,7 +9,6 @@ import { character } from "types/character";
 import { Dependency } from "@flamework/core"
 import type { VoxelService } from "server/Services/VoxelService";
 import { LogClass } from "shared/Modules/Logger";
-import { create } from "shared/Modules/Create";
 import { Make } from "@rbxts/altmake";
 
 const log = new LogClass("M1").Logger
@@ -28,6 +27,7 @@ export class m1 extends Skill {
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	combo: number = 1
+    HumanoidRoot: Part = (this.Character.Instance as character).HumanoidRootPart
 	protected OnConstruct(): void {
 		
 	}
@@ -90,13 +90,14 @@ export class m1 extends Skill {
 
 	@Message({Type: "Event", Destination: "Server"})
 	protected Hitbox() {
-		let root_cf = (this.Character.Instance as character).HumanoidRootPart.CFrame
+		let root_cf = this.HumanoidRoot.CFrame
 		let target = root_cf.Position.add(root_cf.LookVector.mul(4)).add(new Vector3(0, 1, 0))
 		let cf = CFrame.lookAlong(target, root_cf.LookVector)
 
+        // If last m1 in combo then trigger voxel hitbox
 		if (this.combo === m1_anims.GetChildren().size()) {
 			let voxel_packet = this.voxelService.VoxelizeInRadius(5, cf, 2)
-			voxel_packet.velocity = (this.Character.Instance as character).HumanoidRootPart.CFrame.LookVector.mul(20)
+			voxel_packet.velocity = this.HumanoidRoot.CFrame.LookVector.mul(20)
 			this.voxelService.PassVoxelsToClients(voxel_packet)
 		}
 	}
@@ -109,11 +110,7 @@ export class m1 extends Skill {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	@Message({Type: "Event", Destination: "Client"})
 	protected StartClient(combo: number) {
-		// log(`Combo: ${combo}`)
-
-		let anim = this.m1_anims[combo - 1]
-		if (anim) {
-			anim.Play()
-		}
+		log(`Combo: ${combo}`)
+		this.m1_anims[combo - 1].Play()
 	}
 }
