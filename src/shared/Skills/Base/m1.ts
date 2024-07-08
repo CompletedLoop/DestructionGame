@@ -99,6 +99,7 @@ export class m1 extends Skill {
 			anim.Priority = Enum.AnimationPriority.Action3
 			this.m1_anims[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
 
+			// Trigger event to server to fire hitbox
 			anim.GetMarkerReachedSignal("Hitbox").Connect(() => this.Hitbox())
 		})
 
@@ -110,7 +111,7 @@ export class m1 extends Skill {
 
 	@Message({Type: "Event", Destination: "Client"})
 	protected StartClient(combo: number) {
-		log(`Combo: ${combo}`)
+		log(`${combo}`, {Tag: "$combo: "})
 		this.m1_anims[combo - 1].Play()
 	}
 }

@@ -30,14 +30,15 @@ export class LogClass {
 		this.Decorator = Decorator || this.Decorator
 		this.Hook = Hook || this.Hook
 
+        // There is probably a better way of typing this but to prevent this being super long I reduced them as much as possible
 		this.Logger = setmetatable({
 			warn: (t: Logger, ...args: ArgumentTypes) => this.process(MessageWarning, args[0], args[1]),
 			error: (t: Logger, ...args: ArgumentTypes) => this.process(MessageError, args[0], args[1]),
 		}, {
-			__call: (t, ...[args]) => { // Argument types have to be written this way for some reason
-				this.process(MessageOutput, args as any)
+			__call: (t: Logger, ...args: ArgumentTypes) => {
+				this.process(MessageOutput, args[0], args[1])
 			}
-		}) as unknown as Logger
+		} as any) as unknown as Logger
 	}
 
 	private process(MessageType: Enum.MessageType, Message: unknown, LogOptions?: LogOptions) {
@@ -67,7 +68,7 @@ export class LogClass {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
 let GlobalHook: Hook = (This, Message) => {return true}
 
 /**
