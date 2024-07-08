@@ -9,6 +9,8 @@ import { character } from "types/character";
 import { Dependency } from "@flamework/core"
 import type { VoxelService } from "server/Services/VoxelService";
 import { LogClass } from "shared/Modules/Logger";
+import { create } from "shared/Modules/Create";
+import { Make } from "@rbxts/altmake";
 
 const log = new LogClass("M1").Logger
 const m1_anims = ReplicatedStorage.Animations.m1s
@@ -33,6 +35,7 @@ export class m1 extends Skill {
 	last_m1: number = 0
 	attackingSE: StatusEffect = new Attacking(this.Character)
 	voxelService!: VoxelService
+	HitboxPart = Make("Part", { Transparency: .8 })
 	protected OnConstructServer(): void {
 		this.voxelService = Dependency<VoxelService>()
 	}
