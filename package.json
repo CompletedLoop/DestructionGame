@@ -31,7 +31,7 @@
     "@rbxts/altmake": "^0.1.5",
     "@rbxts/cmdr": "^1.12.1",
     "@rbxts/goodsignal": "^1.0.0",
-    "@rbxts/iris-plugin": "^1.0.1",
+    "@rbxts/iris": "^2.2.0-ts.0",
     "@rbxts/profileservice": "^1.4.2",
     "@rbxts/refx": "^0.3.2",
     "@rbxts/topbar-plus": "^3.0.2",
