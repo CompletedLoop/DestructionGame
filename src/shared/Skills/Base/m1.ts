@@ -28,41 +28,18 @@ export class m1 extends Skill {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	combo: number = 1
     HumanoidRoot: Part = (this.Character.Instance as character).HumanoidRootPart
-	protected OnConstruct(): void {
-		
-	}
-	
+	protected OnConstruct(): void {}
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
 	last_m1: number = 0
 	attackingSE: StatusEffect = new Attacking(this.Character)
 	voxelService!: VoxelService
 	HitboxPart = Make("Part", { Transparency: .8 })
+
 	protected OnConstructServer(): void {
 		this.voxelService = Dependency<VoxelService>()
 	}
 
-	m1_anims!: AnimationTrack[]
-	protected OnConstructClient(): void {
-		// Load animations
-		const animator = this.Character.Humanoid.FindFirstChildOfClass("Animator") as Animator
-		RunService.Stepped.Wait()
-		RunService.Stepped.Wait()
-
-		this.m1_anims = []
-		m1_anims.GetChildren().forEach((m1) => {
-			let anim = animator.LoadAnimation(m1 as Animation)
-			anim.Priority = Enum.AnimationPriority.Action3
-			this.m1_anims[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
-
-			anim.GetMarkerReachedSignal("Hitbox").Connect(() => this.Hitbox())
-		})
-
-		// Metadata
-		this.MetadataChanged.Connect((data) => {
-			this.combo = (data as unknown as Metadata).Combo
-		})
-	}
-
-	///////////////////////////////////////////////////////////////////////////////////////////////
 	public OnStartServer(): void {
 		if (this.Character.Humanoid.Health < 1) this.End()
 			
@@ -108,6 +85,29 @@ export class m1 extends Skill {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
+	m1_anims!: AnimationTrack[]
+
+	protected OnConstructClient(): void {
+		// Load animations
+		const animator = this.Character.Humanoid.FindFirstChildOfClass("Animator") as Animator
+		RunService.Stepped.Wait()
+		RunService.Stepped.Wait()
+
+		this.m1_anims = []
+		m1_anims.GetChildren().forEach((m1) => {
+			let anim = animator.LoadAnimation(m1 as Animation)
+			anim.Priority = Enum.AnimationPriority.Action3
+			this.m1_anims[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
+
+			anim.GetMarkerReachedSignal("Hitbox").Connect(() => this.Hitbox())
+		})
+
+		// Metadata
+		this.MetadataChanged.Connect((data) => {
+			this.combo = (data as unknown as Metadata).Combo
+		})
+	}
+
 	@Message({Type: "Event", Destination: "Client"})
 	protected StartClient(combo: number) {
 		log(`Combo: ${combo}`)
