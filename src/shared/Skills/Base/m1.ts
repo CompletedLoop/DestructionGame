@@ -74,6 +74,9 @@ export class m1 extends Skill {
 
 		this.last_m1 = tick()
 		this.attackingSE.Start()
+
+		this.StartClient(this.combo)
+		this.ApplyCooldown(cooldown)
 		
 		task.delay(.4, () => {
 			this.attackingSE.Stop()
@@ -83,9 +86,6 @@ export class m1 extends Skill {
 				this.set_combo(1)
 			}
 		})
-		
-		this.m1_accepted(this.combo)
-		this.ApplyCooldown(cooldown)
 	}
 
 	@Message({Type: "Event", Destination: "Server"})
@@ -107,12 +107,8 @@ export class m1 extends Skill {
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	public OnStartClient(): void {
-		//
-	}
-
 	@Message({Type: "Event", Destination: "Client"})
-	protected m1_accepted(combo: number) {
+	protected StartClient(combo: number) {
 		// log(`Combo: ${combo}`)
 
 		let anim = this.m1_anims[combo - 1]
