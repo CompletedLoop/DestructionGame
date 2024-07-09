@@ -8,7 +8,7 @@ export class TopbarController implements OnStart {
 
     onStart(): void {
         new Icon().setImage("13612120903").oneClick(true).selected.Connect(() => {
-            this.SettingsController.toggle()
+            this.SettingsController.toggleSettingsPanel()
         })
     }
 }
