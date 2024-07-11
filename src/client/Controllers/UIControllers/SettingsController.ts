@@ -5,7 +5,6 @@ import { LogClass } from "shared/Modules/Logger";
 import Iris from "@rbxts/iris";
 import { Lighting, Players } from "@rbxts/services";
 import { CheckboxCreation } from "@rbxts/iris/out/widgetsTypes/Checkbox";
-import { InputNumCreation } from "@rbxts/iris/out/widgetsTypes/Input";
 
 const log = new LogClass("SettingsController").Logger
 

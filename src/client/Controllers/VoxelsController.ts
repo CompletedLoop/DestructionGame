@@ -100,7 +100,6 @@ export class DestructionClient implements OnStart {
 		if (power) velocity = velocity.mul(power || 1)
 		velocity = velocity.add(new Vector3(0, 20, 0))
 		voxel.AssemblyLinearVelocity = velocity
-		// voxel.ApplyImpulse(velocity)
 	}
 
 	anchorDormantVoxels() {
