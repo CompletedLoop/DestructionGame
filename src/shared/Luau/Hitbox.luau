@@ -1,8 +1,9 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 --Hitbox Utilizing Roblox's Spatial Query Methods
 
-local GoodSignal = require(script.GoodSignal)
+local GoodSignal = require(ReplicatedStorage.Modules.GoodSignal)
 
 local Hitbox = {}
 Hitbox.__index = Hitbox

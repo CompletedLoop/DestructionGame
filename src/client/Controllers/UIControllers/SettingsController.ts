@@ -1,10 +1,10 @@
+import { Lighting, Players } from "@rbxts/services";
 import { Controller, OnStart } from "@flamework/core";
 import { State, Widget } from "@rbxts/iris/out/IrisDeclaration";
 import { WindowCreation } from "@rbxts/iris/out/widgetsTypes/Window";
 import { LogClass } from "shared/Modules/Logger";
-import Iris from "@rbxts/iris";
-import { Lighting, Players } from "@rbxts/services";
 import { CheckboxCreation } from "@rbxts/iris/out/widgetsTypes/Checkbox";
+import Iris from "@rbxts/iris";
 
 const log = new LogClass("SettingsController").Logger
 
@@ -31,11 +31,18 @@ export class SettingsController implements OnStart {
 
     private render(){
         this.Window = Iris.Window(["Settings"], {isOpened: this.WindowState, position: InitialPanelPosition, size: InitialPanelSize}); {
+            // Performance
             Iris.Tree(["Performance"], {isUncollapsed: true}); {
-                this.bindToPlayerSettings(Iris.Checkbox(["Shadows"])).state.isChecked.onChange((value: boolean) => {
+                this.bindToPlayerSettings(Iris.Checkbox(["Shadows"], {isChecked: Lighting.GlobalShadows})).state.isChecked.onChange((value: boolean) => {
                     Lighting.GlobalShadows = value
                 })
             } Iris.End()
+
+            // Audio
+            Iris.Tree(["Audio"], {isUncollapsed: true}); {
+                // this.bindToPlayerSettings()
+            } Iris.End()
+
         } Iris.End()
     }
 

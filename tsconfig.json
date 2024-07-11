@@ -22,7 +22,9 @@
 		"baseUrl": "src",
 		"incremental": true,
 		"tsBuildInfoFile": "out/tsconfig.tsbuildinfo",
+
         "noUnusedLocals": false,
+        "noUnusedParameters": false,
 
 		"experimentalDecorators": true,
 		"plugins": [

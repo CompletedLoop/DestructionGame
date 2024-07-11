@@ -10,6 +10,7 @@ import { Dependency } from "@flamework/core"
 import type { VoxelService } from "server/Services/VoxelService";
 import { LogClass } from "shared/Modules/Logger";
 import { Make } from "@rbxts/altmake";
+import Hitbox from "shared/Luau/Hitbox";
 
 const log = new LogClass("M1").Logger
 const m1_anims = ReplicatedStorage.Animations.m1s
@@ -20,6 +21,7 @@ interface Metadata {
 
 @SkillDecorator
 export class m1 extends Skill {
+    // Skill config
 	declare protected CheckedByOthers: true;
 	protected MutualExclusives: Constructor<AnyStatus>[] = [
 		Stun, Blocking, Ragdolled, Attacking
@@ -34,10 +36,16 @@ export class m1 extends Skill {
 	last_m1: number = 0
 	attackingSE: StatusEffect = new Attacking(this.Character)
 	voxelService!: VoxelService
-	HitboxPart = Make("Part", { Transparency: .8 })
+
+    HitboxPart!: Part
+    HitboxClass!: Hitbox;
 
 	protected OnConstructServer(): void {
 		this.voxelService = Dependency<VoxelService>()
+
+        this.HitboxPart = Make("Part", { Transparency: .8, BrickColor: BrickColor.Red(), Size: new Vector3(3, 6, 4) })
+        this.HitboxClass = new Hitbox([this.HitboxPart])
+        this.HitboxClass.PlayerEntered.Connect((...args) => this.OnHitboxHit(...args))
 	}
 
 	public OnStartServer(): void {
@@ -65,11 +73,19 @@ export class m1 extends Skill {
 		})
 	}
 
+    private OnHitboxHit(character: character, part: Part) {
+        if (character === this.Character.Instance) return
+        print(character)
+    }
+
 	@Message({Type: "Event", Destination: "Server"})
 	protected Hitbox() {
 		let root_cf = this.HumanoidRoot.CFrame
 		let target = root_cf.Position.add(root_cf.LookVector.mul(4)).add(new Vector3(0, 1, 0))
 		let cf = CFrame.lookAlong(target, root_cf.LookVector)
+
+        this.HitboxPart.CFrame = cf
+        this.HitboxClass.Enable(.2)
 
         // If last m1 in combo then trigger voxel hitbox
 		if (this.combo === m1_anims.GetChildren().size()) {

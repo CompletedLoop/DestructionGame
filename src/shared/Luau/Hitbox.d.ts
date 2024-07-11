@@ -11,9 +11,9 @@ interface Hitbox {
 	PartEntered: Signal
 }
 
-interface HitboxClass {
-	new(): Hitbox
+interface HitboxConstructor {
+	new(Parts: Part[]): Hitbox
 }
 
-declare const HitboxClass: HitboxClass
-export = HitboxClass
+declare const Hitbox: HitboxConstructor
+export = Hitbox
