@@ -1,25 +1,26 @@
-import Signal from "@rbxts/goodsignal"
-
 /**
  * A class to call a callback from a Signal only if a specified time has elapsed
  */
 export class TimedConnection {
-	connection: RBXScriptConnection
-	sleep: number
-	timer: number
-    constructor(event: RBXScriptSignal, callback: (...args: unknown[]) => void, sleep: number) {
+    public sleep: number
+    public lastCall: number
+	private connection: RBXScriptConnection
+
+    constructor(event: RBXScriptSignal, callback: Callback, sleep: number) {
         this.sleep = sleep
-        this.timer = 0
+        this.lastCall = 0
         
         this.connection = event.Connect((...args: unknown[]) => {
-            let time = tick()
-            if (time > this.timer) {
-                callback(...args)
-                this.timer = time + this.sleep
+            if (os.clock() - this.lastCall > this.sleep) {
+                task.spawn(callback, ...args)
+                this.lastCall = os.clock()
             }
         })
     }
 
+    /**
+     * Cleans up
+     */
 	Destroy() {
 		this.connection.Disconnect()
 	}

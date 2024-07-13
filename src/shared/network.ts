@@ -12,7 +12,11 @@ interface ServerToClientEvents {
 	}
 }
 
-interface ClientToServerFunctions {}
+interface ClientToServerFunctions {
+	Debug: {
+		GetPing(): string
+	}
+}
 
 interface ServerToClientFunctions {}
 
