@@ -2,7 +2,7 @@ import { Workspace, ReplicatedStorage, TweenService, RunService } from "services
 import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Constants } from "shared/Constants";
-import { LogClass } from "shared/Modules/Logger";
+import { Logger } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/VoxelInfoPacket";
 import { TimedConnection } from "shared/Modules/TimedConnection";
 
@@ -10,7 +10,7 @@ const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
 oparams.FilterType = Enum.RaycastFilterType.Include
 
-const log = new LogClass("VoxelsController").Logger
+const log = new Logger("VoxelsController").Logger
 
 @Controller({})
 export class DestructionClient implements OnStart {

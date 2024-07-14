@@ -10,7 +10,7 @@ export interface Logger {
 	error(...args: ArgumentTypes): void,
 }
 
-export type Hook = (This: LogClass, Message?: unknown) => boolean | undefined
+export type Hook = (This: Logger, Message?: unknown) => boolean | undefined
 type ArgumentTypes = [Message: unknown, LogOptions?: LogOptions]
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ const MessageOutput = Enum.MessageType.MessageOutput
 const MessageWarning = Enum.MessageType.MessageWarning
 const MessageError = Enum.MessageType.MessageError
 
-export class LogClass {
+export class Logger {
 	Logger!: Logger
 
 	Name: string
@@ -30,14 +30,11 @@ export class LogClass {
 		this.Decorator = Decorator || this.Decorator
 		this.Hook = Hook || this.Hook
 
-        // There is probably a better way of typing this but to prevent this being super long I reduced them as much as possible
 		this.Logger = setmetatable({
-			warn: (t: Logger, ...args: ArgumentTypes) => this.process(MessageWarning, args[0], args[1]),
-			error: (t: Logger, ...args: ArgumentTypes) => this.process(MessageError, args[0], args[1]),
+			warn : (t: Logger, ...args: ArgumentTypes) => this.process(MessageWarning, args[0], args[1]),
+			error: (t: Logger, ...args: ArgumentTypes) => this.process(MessageError  , args[0], args[1]),
 		}, {
-			__call: (t: Logger, ...args: ArgumentTypes) => {
-				this.process(MessageOutput, args[0], args[1])
-			}
+			__call: (t: Logger, ...args: ArgumentTypes) => this.process(MessageOutput, args[0], args[1]),	
 		} as any) as unknown as Logger
 	}
 
@@ -54,16 +51,15 @@ export class LogClass {
 			}
 		}
 
-		const FinalMessage = `${CurrentTag}${Message}`
-		if (!MessageType || MessageType === MessageOutput) print(FinalMessage)
-		else if (MessageType === MessageWarning) warn(FinalMessage)
-		else if (MessageType === MessageError) error(FinalMessage, 2)
+		if (!MessageType || MessageType === MessageOutput) print(CurrentTag, Message)
+		else if (MessageType === MessageWarning) warn(CurrentTag, Message)
+		else if (MessageType === MessageError) error(`${CurrentTag} ${Message}`, 2)
 	}
 
 	private getTag(): string {
-		if (!this.Decorator || this.Decorator === "Brackets") return `[${this.Name}]: `
-		else if (!this.Decorator || this.Decorator === "Braces") return `{${this.Name}}: `
-		else if (!this.Decorator || this.Decorator === "DollarSign") return `$${this.Name}: `
+		if (!this.Decorator || this.Decorator === "Brackets") return `[${this.Name}]:`
+		else if (!this.Decorator || this.Decorator === "Braces") return `{${this.Name}}:`
+		else if (!this.Decorator || this.Decorator === "DollarSign") return `$${this.Name}:`
 		else return this.Decorator
 	}
 }

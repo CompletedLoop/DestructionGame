@@ -1,6 +1,6 @@
 import { Lighting, Players, Workspace } from "@rbxts/services";
 import { Controller, OnStart } from "@flamework/core";
-import { LogClass } from "shared/Modules/Logger";
+import { Logger } from "shared/Modules/Logger";
 
 // Iris types
 import { CheckboxCreation } from "@rbxts/iris/out/widgetsTypes/Checkbox";
@@ -11,7 +11,7 @@ import { InputNumCreation } from "@rbxts/iris/out/widgetsTypes/Input";
 import Iris from "@rbxts/iris";
 import { TopbarController } from "./TopbarController";
 
-const log = new LogClass("SettingsController").Logger
+const log = new Logger("SettingsController").Logger
 
 const Mouse = Players.LocalPlayer.GetMouse()
 const ScreenSize = new Vector2(Mouse.ViewSizeX, Mouse.ViewSizeY)
@@ -40,8 +40,11 @@ export class SettingsController implements OnStart {
             // Performance
             Iris.Tree(["Performance"], {isUncollapsed: true}); {
                 Iris.Checkbox(["Shadows"], {isChecked: Lighting.GlobalShadows}).state.isChecked.onChange((value: boolean) => {
-                    log(value)
                     Lighting.GlobalShadows = value
+                })
+
+                Iris.Checkbox(["Destruction FX"], {isChecked: true}).state.isChecked.onChange((value: boolean) => {
+                    Workspace.GameConfig.SetAttribute("DestructionFX", value)
                 })
             } Iris.End()
             

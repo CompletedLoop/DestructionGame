@@ -1,4 +1,4 @@
-import { Workspace } from "services";
+import { RunService, Workspace } from "services";
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent } from "@flamework/components";
 
@@ -10,6 +10,8 @@ import { Stun } from "shared/StatusEffects/Stun";
 @Component({tag: "character"})
 export class CharacterServer extends BaseComponent<{}, character> implements OnStart {
 	onStart() {
+		RunService.Stepped.Wait()
+
 		// Parent the Character instance to Characters folder
 		this.instance.Parent = Workspace.Characters
 
@@ -19,7 +21,7 @@ export class CharacterServer extends BaseComponent<{}, character> implements OnS
 		// Apply base moveset
 		WSC_Character.ApplySkillsFromMoveset(Base)
 
-		// TODO Apply currently chosen moveset
+		// TODO Apply chosen moveset
 
 		// Destroy when player dies and credit the killer
 		this.instance.Humanoid.Died.Connect(() => {

@@ -8,11 +8,11 @@ import { Attacking } from "shared/StatusEffects/Attacking";
 import { character } from "types/character";
 import { Dependency } from "@flamework/core"
 import type { VoxelService } from "server/Services/VoxelService";
-import { LogClass } from "shared/Modules/Logger";
+import { Logger } from "shared/Modules/Logger";
 import { Make } from "@rbxts/altmake";
 import Hitbox from "shared/Luau/Hitbox";
 
-const log = new LogClass("M1").Logger
+const log = new Logger("M1").Logger
 const m1_anims = ReplicatedStorage.Animations.m1s
 
 interface Metadata {
