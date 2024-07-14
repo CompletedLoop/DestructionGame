@@ -15,6 +15,8 @@ interface ServerToClientEvents {
 }
 
 interface ClientToServerFunctions {
+	GetLoadedPlayerSettings(): PlayerSettings
+
 	Debug: {
 		GetPing(): string
 	}
