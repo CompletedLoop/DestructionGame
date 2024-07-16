@@ -814,49 +814,49 @@ function VoxBreaker:VoxelizePart(Part : Part, MinimumVoxelSize : number, TimeToR
 	return parts
 end
 
-local destruction_sounds = game:GetService("ReplicatedStorage"):WaitForChild("DestructionSounds")
-local normal_sounds = destruction_sounds.Normal:GetChildren()
-local glass_sounds = destruction_sounds.Glass:GetChildren()
+-- local destruction_sounds = game:GetService("ReplicatedStorage"):WaitForChild("DestructionSounds")
+-- local normal_sounds = destruction_sounds.Normal:GetChildren()
+-- local glass_sounds = destruction_sounds.Glass:GetChildren()
 
-function make_sound_part(position)
-	local sound_part = Instance.new("Part")
-	sound_part.Transparency = 1
-	sound_part.Anchored = true
-	sound_part.CanCollide = false
-	sound_part.CanQuery = false
-	sound_part.Position = position
-	return sound_part
-end
+-- function make_sound_part(position)
+-- 	local sound_part = Instance.new("Part")
+-- 	sound_part.Transparency = 1
+-- 	sound_part.Anchored = true
+-- 	sound_part.CanCollide = false
+-- 	sound_part.CanQuery = false
+-- 	sound_part.Position = position
+-- 	return sound_part
+-- end
 
-function make_debris_sounds(part, Params)
-	-- if not game:GetService("RunService"):IsClient() then return end
-	local sounds = 0
-	for _, touching_part: Part in GetTouchingParts(part, Params) do
-		if not touching_part:GetAttribute(TagName) then continue end
-		if touching_part:GetAttribute("Voxel") and (not touching_part.Anchored) then continue end
+-- function make_debris_sounds(part, Params)
+-- 	-- if not game:GetService("RunService"):IsClient() then return end
+-- 	local sounds = 0
+-- 	for _, touching_part: Part in GetTouchingParts(part, Params) do
+-- 		if not touching_part:GetAttribute(TagName) then continue end
+-- 		if touching_part:GetAttribute("Voxel") and (not touching_part.Anchored) then continue end
 
-		local sound: Sound;
-		if touching_part.Material == Enum.Material.Glass then
-			if touching_part:GetAttribute("Voxel") then continue end
-			sound = glass_sounds[math.random(1, #glass_sounds)]:Clone()
-		else
-			if sounds >= 2 then continue end
-			sound = normal_sounds[math.random(1, #normal_sounds)]:Clone()
-			sounds += 1
-		end
+-- 		local sound: Sound;
+-- 		if touching_part.Material == Enum.Material.Glass then
+-- 			if touching_part:GetAttribute("Voxel") then continue end
+-- 			sound = glass_sounds[math.random(1, #glass_sounds)]:Clone()
+-- 		else
+-- 			if sounds >= 2 then continue end
+-- 			sound = normal_sounds[math.random(1, #normal_sounds)]:Clone()
+-- 			sounds += 1
+-- 		end
 
-		local sound_part = make_sound_part(touching_part.Position)
-		sound.Parent = sound_part
-		sound_part.Parent = workspace.FX
+-- 		local sound_part = make_sound_part(touching_part.Position)
+-- 		sound.Parent = sound_part
+-- 		sound_part.Parent = workspace.FX
 
-		task.delay(math.random(0.1, .3), function()
-			sound:Play()
-			task.wait(3)
-			sound_part:Destroy()
-		end)
+-- 		task.delay(math.random(0.1, .3), function()
+-- 			sound:Play()
+-- 			task.wait(3)
+-- 			sound_part:Destroy()
+-- 		end)
 
-	end
-end
+-- 	end
+-- end
 
 function VoxBreaker:CreateHitbox(Size : Vector3, Cframe : CFrame , Shape : Enum.PartType , MinimumVoxelSize : number , TimeToReset : number, Params : OverlapParams) --Creates one hitbox which divides any applicable parts that are touching it. 
 	--If the TimeToReset parameter is less than 0, then the parts will not reset.
@@ -903,7 +903,7 @@ function VoxBreaker:CreateHitbox(Size : Vector3, Cframe : CFrame , Shape : Enum.
 		part.Parent = game.Workspace.FX.Hitboxes
 	end
 	
-	make_debris_sounds(part, Params)
+	-- make_debris_sounds(part, Params)
 
 	repeat
 		local touching = GetTouchingParts(part,Params) --Initial check

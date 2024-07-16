@@ -90,6 +90,7 @@ export class m1 extends Skill {
         // If last m1 in combo then trigger voxel hitbox
 		if (this.combo === m1_anims.GetChildren().size()) {
 			let voxel_packet = this.voxelService.VoxelizeInRadius(5, cf, 2)
+			this.voxelService.PlayDestructionSoundFromVoxels(cf.Position, voxel_packet)
 			voxel_packet.velocity = this.HumanoidRoot.CFrame.LookVector.mul(20)
 			this.voxelService.PassVoxelsToClients(voxel_packet)
 		}

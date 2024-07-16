@@ -21,6 +21,7 @@ export class BoomToolServer implements OnStart {
 			// })
 
 			let voxel_packet = this.voxelsService.VoxelizeInRadius(radius, cframe, 3)
+			this.voxelsService.PlayDestructionSoundFromVoxels(cframe.Position, voxel_packet)
 			voxel_packet.power = power
 			this.voxelsService.PassVoxelsToClients(voxel_packet)
 		})

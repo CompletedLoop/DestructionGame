@@ -46,5 +46,7 @@ export class TopbarController implements OnStart {
         else if (ping > 150) icon_label.TextColor3 = Color3.fromRGB(255, 74, 74)
 
         this.Ping_Icon.setLabel(`${tostring(ping)}ms`)
+
+        this.Region_Icon.setLabel((Workspace.GetAttribute("Region") as string) || "unavailabe")
     }
 }

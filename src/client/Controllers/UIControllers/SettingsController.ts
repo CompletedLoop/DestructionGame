@@ -111,7 +111,11 @@ export class SettingsController implements OnStart {
         task.wait(1) // Wait so things can load
 
         // Load settings then render settings panel
-        this.loadSetttings()
+        while (!this.CurrentSettings) {
+            this.loadSetttings()
+
+            if (this.CurrentSettings) break
+        }
         
         // Set values to loaded settings
         Lighting.GlobalShadows = this.CurrentSettings.Shadows

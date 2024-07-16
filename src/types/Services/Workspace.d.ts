@@ -20,7 +20,11 @@ interface Workspace extends Model {
 				entrance: Model;
 			};
 		};
-		Spawns: Folder;
+		Spawns: Folder & {
+			SpawnLocation: SpawnLocation & {
+				Decal: Decal;
+			};
+		};
 		Concrete: Folder;
 		Baseplate: Part;
 		ground: Part;
@@ -34,10 +38,11 @@ interface Workspace extends Model {
 	FX: Folder & {
 		Hitboxes: Folder;
 		Voxels: Folder;
+		SFX: Folder;
 	};
 	Characters: Folder & {
 		Dummies: Folder & {
-			Dummy: Model & {
+			["Animation Dummy"]: Model & {
 				["Left Leg"]: Part & {
 					Snap: Snap;
 					LeftFootAttachment: Attachment;
@@ -89,19 +94,7 @@ interface Workspace extends Model {
 					["dot cursor image"]: Decal;
 				};
 				AnimSaves: ObjectValue & {
-					["m1's"]: KeyframeSequence & {
-						start: Keyframe & {
-							HumanoidRootPart: Pose & {
-								Null: IntValue;
-								Torso: Pose & {
-									["Right Arm"]: Pose;
-									Null: IntValue;
-									Head: Pose;
-								};
-							};
-							hitbox: KeyframeMarker;
-						};
-					};
+					["m1's"]: KeyframeSequence;
 					r1: KeyframeSequence;
 					r2: KeyframeSequence;
 				};
