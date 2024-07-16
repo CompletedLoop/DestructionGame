@@ -5,7 +5,7 @@ import { Blocking } from "shared/StatusEffects/Blocking";
 import { Stun } from "shared/StatusEffects/Stun";
 import { Ragdolled } from "shared/StatusEffects/Ragdolled";
 import { Attacking } from "shared/StatusEffects/Attacking";
-import { character } from "types/character";
+import { character } from "types/Instances/character";
 import { Dependency } from "@flamework/core"
 import type { VoxelService } from "server/Services/VoxelService";
 import { Logger } from "shared/Modules/Logger";

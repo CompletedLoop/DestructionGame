@@ -1,7 +1,7 @@
 import { Controller, OnStart, OnTick } from "@flamework/core";
 import { UserInputService, Players } from "services";
 import { Character } from "@rbxts/wcs";
-import { plr } from "types/plr";
+import { plr } from "types/Instances/plr";
 
 import { m1 } from "shared/Skills/Base/m1";
 

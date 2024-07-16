@@ -3,7 +3,7 @@ import { Controller, OnStart } from "@flamework/core";
 import { Events } from "client/network";
 import { Constants } from "shared/Constants";
 import { Logger } from "shared/Modules/Logger";
-import { VoxelInfoPacket } from "types/VoxelInfoPacket";
+import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 import { TimedConnection } from "shared/Modules/TimedConnection";
 
 const oparams = new OverlapParams()
@@ -96,10 +96,10 @@ export class DestructionClient implements OnStart {
 	}
 
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {
-		let velocity = CFrame.lookAt(cframe.Position, voxel.Position).LookVector.mul((10 * (voxel.Mass)))
-		if (power) velocity = velocity.mul(power || 1)
+		let velocity = CFrame.lookAt(cframe.Position, voxel.Position).LookVector.mul(( 10 * (voxel.Mass) ))
+		if (power) velocity = velocity.mul( power || 1 )
 		velocity = velocity.add(new Vector3(0, 20, 0))
-		voxel.AssemblyLinearVelocity = velocity
+		voxel.AssemblyLinearVelocity = velocity.mul(new Vector3(1, 1, 1))
 	}
 
 	anchorDormantVoxels() {
@@ -107,7 +107,7 @@ export class DestructionClient implements OnStart {
 		(Workspace.FX.Voxels.GetDescendants() as Part[]).forEach((voxel: Part) => {
 			if (voxel.GetAttribute("_voxel")) {
 				if (!voxel.Anchored){
-					if (voxel.AssemblyLinearVelocity.Magnitude < 5) {
+					if (voxel.AssemblyLinearVelocity.Magnitude < 1) {
 						voxel.Anchored = true
 						voxel.AssemblyLinearVelocity = Vector3.zero
 						count += 1

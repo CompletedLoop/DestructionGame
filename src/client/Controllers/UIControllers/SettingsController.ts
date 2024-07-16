@@ -9,8 +9,9 @@ import { WidgetState, WidgetEvents, WidgetExtra } from "@rbxts/iris/out/widgetsT
 import { WindowCreation } from "@rbxts/iris/out/widgetsTypes/Window";
 import { InputNumCreation } from "@rbxts/iris/out/widgetsTypes/Input";
 import Iris from "@rbxts/iris";
+
 import { TopbarController } from "./TopbarController";
-import { PlayerSettings } from "types/PlayerSettings";
+import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 import { Events, Functions } from "client/network";
 
 const log = new Logger("SettingsController").Logger
@@ -49,7 +50,7 @@ export class SettingsController implements OnStart {
         Iris.Window(["Settings"], {isOpened: this.WindowState, position: InitialPanelPosition, size: InitialPanelSize}); {
             // Performance
             Iris.Tree(["Performance"], {isUncollapsed: true}); {
-                Lighting.GlobalShadows = this.CurrentSettings.Shadows
+                
                 Iris.Checkbox(["Shadows"], {isChecked: this.CurrentSettings.Shadows}).state.isChecked.onChange((value: boolean) => {
                     Lighting.GlobalShadows = value
                     this.updateSetting("Shadows", value)
@@ -57,6 +58,7 @@ export class SettingsController implements OnStart {
 
                 Iris.Checkbox(["Destruction FX"], {isChecked: this.CurrentSettings.DestructionFX}).state.isChecked.onChange((value: boolean) => {
                     Workspace.GameConfig.SetAttribute("DestructionFX", value)
+                    this.updateSetting("DestructionFX", value)
                 })
             } Iris.End()
             
@@ -65,6 +67,7 @@ export class SettingsController implements OnStart {
             // Audio
             Iris.Tree(["Audio (doesnt work yet)"], {isUncollapsed: true}); {
                 Iris.SliderNum(["FX Volume", 0.05, 0, 1], {number: this.CurrentSettings.FXVolume}).state.number.onChange((value: number) => {
+                    this.updateSetting("FXVolume", value)
                 })
             } Iris.End()
             
@@ -73,7 +76,7 @@ export class SettingsController implements OnStart {
             // Extra
             Iris.Tree(["Extra"], {isUncollapsed: true}); {
                 Iris.InputNum(["Kill Sound ID", 1, 0, math.huge, undefined, true], {number: this.CurrentSettings.KillSoundID}).state.number.onChange((value: number) => {
-                    
+                    this.updateSetting("KillSoundID", value)
                 })
 
                 Iris.SliderNum(["Field of View", 1, 1, 120], {number: this.CurrentSettings.FOV}).state.number.onChange((value: number) => {
@@ -84,20 +87,43 @@ export class SettingsController implements OnStart {
 
             // Debug
             Iris.Tree(["Debug"], {isUncollapsed: true}); {
-                Iris.Checkbox(["Show FPS"], {isChecked: this.CurrentSettings.FPS}).state.isChecked.onChange((value: boolean) => this.topbarController.FPS_Icon.setEnabled(value))
-                Iris.Checkbox(["Show Ping"], {isChecked: this.CurrentSettings.PING}).state.isChecked.onChange((value: boolean) => this.TopbarController.Ping_Icon.setEnabled(value))
-                Iris.Checkbox(["Show Region"], {isChecked: this.CurrentSettings.REG}).state.isChecked.onChange((value: boolean) => this.TopbarController.Region_Icon.setEnabled(value))
+                
+                Iris.Checkbox(["Show FPS"], {isChecked: this.CurrentSettings.FPS}).state.isChecked.onChange((value: boolean) => {
+                    this.topbarController.FPS_Icon.setEnabled(value)
+                    this.updateSetting("FPS", value)
+                })
+                
+                Iris.Checkbox(["Show Ping"], {isChecked: this.CurrentSettings.PING}).state.isChecked.onChange((value: boolean) => {
+                    this.TopbarController.Ping_Icon.setEnabled(value)
+                    this.updateSetting("PING", value)
+                })
+                
+                Iris.Checkbox(["Show Region"], {isChecked: this.CurrentSettings.REG}).state.isChecked.onChange((value: boolean) => {
+                    this.TopbarController.Region_Icon.setEnabled(value)
+                    this.updateSetting("REG", value)
+                })
             } Iris.End()
 
         } Iris.End()
     }
 
     onStart(): void {
-        task.wait(1)
+        task.wait(1) // Wait so things can load
 
         // Load settings then render settings panel
         this.loadSetttings()
+        
+        // Set values to loaded settings
+        Lighting.GlobalShadows = this.CurrentSettings.Shadows
 
+        Workspace.Camera.FieldOfView = this.CurrentSettings.FOV
+        
+        this.topbarController.FPS_Icon.setEnabled(this.CurrentSettings.FPS)
+        this.topbarController.Ping_Icon.setEnabled(this.CurrentSettings.PING)
+        this.topbarController.Region_Icon.setEnabled(this.CurrentSettings.REG)
+
+
+        // Start rendering
         Iris.Connect(() => this.render())
     }
 }

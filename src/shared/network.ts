@@ -1,6 +1,6 @@
 import { Networking } from "@flamework/networking";
-import { PlayerSettings } from "types/PlayerSettings";
-import { VoxelInfoPacket } from "types/VoxelInfoPacket";
+import { PlayerSettings} from "types/Interfaces/PlayerSettings";
+import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 
 interface ClientToServerEvents {
 	BoomTool(cframe: CFrame, radius: number, power: number): void,

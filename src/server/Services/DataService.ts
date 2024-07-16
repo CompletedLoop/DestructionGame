@@ -2,7 +2,7 @@ import { Players } from "@rbxts/services";
 import { Service } from "@flamework/core";
 import ProfileService from "@rbxts/profileservice";
 import { Profile } from "@rbxts/profileservice/globals";
-import { plr } from "types/plr";
+import { plr } from "types/Instances/plr";
 import { Logger } from "shared/Modules/Logger";
 import Signal from "@rbxts/goodsignal";
 
@@ -56,7 +56,7 @@ export class DataService {
 				this.Profiles[player.UserId] = player_profile
 				this.Connections[player.UserId] = []
 
-				log(player_profile)
+				// log(player_profile)
 				return player_profile
 			} else {
 				player_profile.Release()

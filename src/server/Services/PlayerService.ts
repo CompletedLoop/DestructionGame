@@ -1,11 +1,11 @@
 import { Service, OnStart } from "@flamework/core";
 import { Players } from "services";
-import { plr } from "types/plr";
+import { plr } from "types/Instances/plr";
 import { DataService, PlayerProfile } from "./DataService";
 import { Make } from "@rbxts/altmake";
 import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "server/network";
-import { PlayerSettings } from "types/PlayerSettings";
+import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 
 const log = new Logger("PlayerService").Logger
 
@@ -57,9 +57,9 @@ export class PlayerDataHandler implements OnStart {
 			log(kills)
 		})
 
-		task.wait(3)
-		while (task.wait(1)) {
-			this.dataService.setProfileData(player, "Kills", this.dataService.getProfileData(player).Kills + 1)
-		}
+		// task.wait(3)
+		// while (task.wait(1)) {
+		// 	this.dataService.setProfileData(player, "Kills", this.dataService.getProfileData(player).Kills + 1)
+		// }
 	}
 }

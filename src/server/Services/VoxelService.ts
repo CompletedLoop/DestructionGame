@@ -2,7 +2,7 @@ import { Service } from "@flamework/core";
 import { Events } from "server/network";
 import { ReplicatedStorage } from "services";
 import { Constants } from "shared/Constants";
-import { VoxelInfoPacket } from "types/VoxelInfoPacket";
+import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 import VoxBreaker from "shared/Luau/VoxBreaker"
 
 @Service({})

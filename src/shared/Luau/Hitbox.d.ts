@@ -1,5 +1,5 @@
 import Signal from "@rbxts/goodsignal"
-import { character } from "types/character"
+import { character } from "types/Interfaces/character"
 
 interface Hitbox {
 	Parts: Part[]
