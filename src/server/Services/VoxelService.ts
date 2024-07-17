@@ -21,30 +21,6 @@ export class VoxelService {
 			power: 1
 		}
 	}
-
-	public PlayDestructionSoundFromVoxels(position: Vector3, voxel_packet: VoxelInfoPacket) {
-		let sound_table: { [x: string]: boolean; } = {}
-
-		voxel_packet.voxels.forEach((voxel: Part) => {
-			const voxel_material = voxel.Material.Name
-
-			if (!sound_table[voxel_material]) {
-				const SoundPart = SoundPartCache.GetPart()
-				SoundPart.Position = position
-				
-				let sound_folder = SoundPart.FindFirstChild(voxel_material)
-				if (!sound_folder) sound_folder = SoundPart.Concrete
-
-				sound_table[voxel_material] = true
-
-				const children = sound_folder.GetChildren() as Sound[]
-				const sound = children[math.random(1, children.size()) - 1]
-				sound.Play()
-				
-				task.delay(2, () => SoundPartCache.ReturnPart(SoundPart))
-			}
-		})
-	}
 	
 	public PassVoxelsToClients(voxel_packet: VoxelInfoPacket) {
 		// Replicate over the voxels

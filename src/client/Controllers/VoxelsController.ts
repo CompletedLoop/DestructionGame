@@ -5,6 +5,13 @@ import { Constants } from "shared/Constants";
 import { Logger } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 import { TimedConnection } from "shared/Modules/TimedConnection";
+import PartCacheModule from "@rbxts/partcache";
+import { Clone } from "@rbxts/altmake";
+
+const DestructionSounds = ReplicatedStorage.DestructionSounds
+
+const SoundPartCache = new PartCacheModule(ReplicatedStorage.SoundPart, 150)
+SoundPartCache.SetCacheParent(Workspace.FX.SFX)
 
 const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
@@ -13,7 +20,7 @@ oparams.FilterType = Enum.RaycastFilterType.Include
 const log = new Logger("VoxelsController").Logger
 
 @Controller({})
-export class DestructionClient implements OnStart {
+export default class DestructionClient implements OnStart {
 	onStart() {
 		Events.Voxels.HandleVoxels.connect((...args) => this.handleVoxels(...args))
 		Events.Voxels.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
@@ -39,8 +46,12 @@ export class DestructionClient implements OnStart {
 			})
 		}
 
+		voxel_packet.voxels = voxels
+
+		this.playDestructionSoundsFromVoxelPacket(voxel_packet)
+
 		// Loop through voxels
-		voxels.forEach((voxel: Part) => {
+		voxel_packet.voxels.forEach((voxel: Part) => {
 			if (voxel_count >= Constants.MAX_DEBRIS) {
 				voxel.Destroy()
 				return
@@ -67,13 +78,13 @@ export class DestructionClient implements OnStart {
 			}
 		})
 		
-		// log.warn(`Processed ${voxels.size()} voxels`)
+		// log(`Processed ${voxels.size()} voxels`)
 
 		// Fade voxels out and destroy
 		task.delay(Constants.VOXEL_LIFETIME, () => {
 			if (!voxel_holder) return
 
-			voxels.forEach((voxel: Part) => {
+			voxel_packet.voxels.forEach((voxel: Part) => {
 				voxel.CollisionGroup = "Debris"
 				TweenService.Create(voxel, new TweenInfo(1), {Transparency: 1}).Play()
 			})
@@ -93,6 +104,30 @@ export class DestructionClient implements OnStart {
 		})
 		voxel_holder.Parent = Workspace.FX.Voxels
 		return voxel_holder
+	}
+
+	playDestructionSoundsFromVoxelPacket(voxel_packet: VoxelInfoPacket) {
+		let sound_table: { [x: string]: boolean; } = {}
+
+		voxel_packet.voxels.forEach((voxel: Part) => {
+			const voxel_material = voxel.Material.Name
+
+			if (!sound_table[voxel_material]) {
+				const SoundPart = SoundPartCache.GetPart()
+				SoundPart.Position = voxel_packet.origin.Position
+				
+				let sound_folder = DestructionSounds.FindFirstChild(voxel_material)
+				if (!sound_folder) sound_folder = DestructionSounds.Concrete
+
+				sound_table[voxel_material] = true
+
+				const children = sound_folder.GetChildren() as Sound[]
+				const sound = children[math.random(1, children.size()) - 1]
+				Clone(sound, { Parent: SoundPart }).Play()
+				
+				task.delay(2, () => SoundPartCache.ReturnPart(SoundPart))
+			}
+		})
 	}
 
 	applyForceToVoxel(voxel: Part, cframe: CFrame, power?: number) {

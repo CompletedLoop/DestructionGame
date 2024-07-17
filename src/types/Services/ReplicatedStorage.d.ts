@@ -55,15 +55,16 @@ interface ReplicatedStorage extends Instance {
 			m2: Animation;
 		};
 	};
-	SoundPart: Part & {
+	DestructionSounds: Folder & {
 		Concrete: Folder & {
 			["1"]: Sound;
 		};
 		Glass: Folder & {
-			["glass shatter"]: Sound;
+			["1"]: Sound;
 			["2"]: Sound;
 		};
 	};
+	SoundPart: Part;
 	rbxts_include: Folder & {
 		RuntimeLib: ModuleScript;
 		Promise: ModuleScript;
