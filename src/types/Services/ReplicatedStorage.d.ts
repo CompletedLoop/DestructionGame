@@ -11,11 +11,17 @@ interface ReplicatedStorage extends Instance {
 			Queue: ModuleScript;
 		};
 		GoodSignal: ModuleScript;
+		VoxBreaker: ModuleScript & {
+			PartCache: ModuleScript & {
+				Table: ModuleScript;
+			};
+		};
 	};
 	TS: Folder & {
 		Modules: Folder & {
 			Logger: ModuleScript;
 			TimedConnection: ModuleScript;
+			SoundPlayer: ModuleScript;
 		};
 		Movesets: Folder & {
 			Base: ModuleScript;
@@ -55,16 +61,25 @@ interface ReplicatedStorage extends Instance {
 			m2: Animation;
 		};
 	};
-	DestructionSounds: Folder & {
-		Concrete: Folder & {
-			["1"]: Sound;
+	Sounds: Folder & {
+		DestructionSounds: Folder & {
+			Concrete: Folder & {
+				["1"]: Sound;
+			};
+			Glass: Folder & {
+				["1"]: Sound;
+				["2"]: Sound;
+			};
 		};
-		Glass: Folder & {
-			["1"]: Sound;
-			["2"]: Sound;
+		Base: Folder & {
+			M1: Folder & {
+				Swing: Sound;
+			};
 		};
 	};
-	SoundPart: Part;
+	SoundPart: Part & {
+		Sound: Sound;
+	};
 	rbxts_include: Folder & {
 		RuntimeLib: ModuleScript;
 		Promise: ModuleScript;

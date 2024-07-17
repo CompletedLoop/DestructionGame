@@ -4,14 +4,10 @@ import { Events } from "client/network";
 import { Constants } from "shared/Constants";
 import { Logger } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
-import { TimedConnection } from "shared/Modules/TimedConnection";
-import PartCacheModule from "@rbxts/partcache";
-import { Clone } from "@rbxts/altmake";
+import TimedConnection from "shared/Modules/TimedConnection";
+import SoundPlayer from "shared/Modules/SoundPlayer";
 
-const DestructionSounds = ReplicatedStorage.DestructionSounds
-
-const SoundPartCache = new PartCacheModule(ReplicatedStorage.SoundPart, 150)
-SoundPartCache.SetCacheParent(Workspace.FX.SFX)
+const DestructionSounds = ReplicatedStorage.Sounds.DestructionSounds
 
 const oparams = new OverlapParams()
 oparams.FilterDescendantsInstances = [Workspace.FX.Voxels]
@@ -20,7 +16,7 @@ oparams.FilterType = Enum.RaycastFilterType.Include
 const log = new Logger("VoxelsController").Logger
 
 @Controller({})
-export default class DestructionClient implements OnStart {
+export default class VoxelsController implements OnStart {
 	onStart() {
 		Events.Voxels.HandleVoxels.connect((...args) => this.handleVoxels(...args))
 		Events.Voxels.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
@@ -112,20 +108,16 @@ export default class DestructionClient implements OnStart {
 		voxel_packet.voxels.forEach((voxel: Part) => {
 			const voxel_material = voxel.Material.Name
 
-			if (!sound_table[voxel_material]) {
-				const SoundPart = SoundPartCache.GetPart()
-				SoundPart.Position = voxel_packet.origin.Position
-				
+			if (!sound_table[voxel_material] && !voxel.GetAttribute("_voxel")) {
 				let sound_folder = DestructionSounds.FindFirstChild(voxel_material)
 				if (!sound_folder) sound_folder = DestructionSounds.Concrete
-
+				
 				sound_table[voxel_material] = true
 
 				const children = sound_folder.GetChildren() as Sound[]
 				const sound = children[math.random(1, children.size()) - 1]
-				Clone(sound, { Parent: SoundPart }).Play()
-				
-				task.delay(2, () => SoundPartCache.ReturnPart(SoundPart))
+
+				SoundPlayer.PlaySoundAtPosition(sound.SoundId, voxel_packet.origin.Position)
 			}
 		})
 	}
@@ -142,7 +134,7 @@ export default class DestructionClient implements OnStart {
 		(Workspace.FX.Voxels.GetDescendants() as Part[]).forEach((voxel: Part) => {
 			if (voxel.GetAttribute("_voxel")) {
 				if (!voxel.Anchored){
-					if (voxel.AssemblyLinearVelocity.Magnitude < 1) {
+					if (voxel.AssemblyLinearVelocity.Magnitude < .1) {
 						voxel.Anchored = true
 						voxel.AssemblyLinearVelocity = Vector3.zero
 						count += 1

@@ -11,9 +11,12 @@ import type { VoxelService } from "server/Services/VoxelService";
 import { Logger } from "shared/Modules/Logger";
 import { Make } from "@rbxts/altmake";
 import Hitbox from "shared/Luau/Hitbox";
+import SoundPlayer from "shared/Modules/SoundPlayer";
 
 const log = new Logger("M1").Logger
 const m1_anims = ReplicatedStorage.Animations.m1s
+
+const m1_sound_folder = ReplicatedStorage.Sounds.Base.M1
 
 interface Metadata {
 	Combo: number
@@ -59,6 +62,8 @@ export class m1 extends Skill {
 
 		this.last_m1 = tick()
 		this.attackingSE.Start()
+
+		SoundPlayer.PlaySoundAtPosition(m1_sound_folder.Swing.SoundId, this.HumanoidRoot.Position)
 
 		this.StartClient(this.combo)
 		this.ApplyCooldown(cooldown)

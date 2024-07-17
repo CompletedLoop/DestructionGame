@@ -1,7 +1,7 @@
 import { Controller, Dependency, OnRender, OnStart, OnTick } from "@flamework/core";
 import { Icon } from "@rbxts/topbar-plus";
 import { SettingsController } from "./SettingsController";
-import { TimedConnection } from "shared/Modules/TimedConnection";
+import TimedConnection from "shared/Modules/TimedConnection";
 import { Players, RunService, Workspace } from "@rbxts/services";
 import { Functions } from "client/network";
 

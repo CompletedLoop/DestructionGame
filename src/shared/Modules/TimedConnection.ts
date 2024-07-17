@@ -1,7 +1,7 @@
 /**
  * A class to call a callback from a Signal only if a specified time has elapsed
  */
-export class TimedConnection {
+export default class TimedConnection {
     public sleep: number
     public lastCall: number
 	private connection: RBXScriptConnection
