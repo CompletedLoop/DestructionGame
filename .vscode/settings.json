@@ -32,7 +32,7 @@
 		".eslintrc": true,
 		"aftman.toml": true,
 		"out": true,
-		"default.project.json": true,
+		"default.project.json": false,
 		"patches": true
 	},
 	"explorerExclude.backup": {}

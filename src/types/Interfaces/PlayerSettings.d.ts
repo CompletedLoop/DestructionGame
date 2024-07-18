@@ -1,4 +1,6 @@
 export interface PlayerSettings {
+    AutoRun: boolean,
+
     Shadows: boolean,
     DestructionFX: boolean,
 

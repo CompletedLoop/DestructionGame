@@ -19,7 +19,7 @@ const log = new Logger("SettingsController").Logger
 const Mouse = Players.LocalPlayer.GetMouse()
 const ScreenSize = new Vector2(Mouse.ViewSizeX, Mouse.ViewSizeY)
 
-const InitialPanelSize = new Vector2(350, 300)
+const InitialPanelSize = new Vector2(350, 350)
 const InitialPanelPosition = ScreenSize.div(2).sub(InitialPanelSize.div(2))
 
 @Controller({})
@@ -45,9 +45,8 @@ export class SettingsController implements OnStart {
         Events.UpdatePlayerSettings(this.CurrentSettings)
     }
 
-    // go through all settings and assign each to their respective value
     private render(){
-        Iris.Window(["Settings"], {isOpened: this.WindowState, position: InitialPanelPosition, size: InitialPanelSize}); {
+        Iris.Window(["Settings Panel"], {isOpened: this.WindowState, position: InitialPanelPosition, size: InitialPanelSize}); {
             // Performance
             Iris.Tree(["Performance"], {isUncollapsed: true}); {
                 
@@ -84,6 +83,8 @@ export class SettingsController implements OnStart {
                     this.updateSetting("FOV", value)
                 })
             } Iris.End()
+
+            Iris.Separator()
 
             // Debug
             Iris.Tree(["Debug"], {isUncollapsed: true}); {
@@ -125,7 +126,6 @@ export class SettingsController implements OnStart {
         this.topbarController.FPS_Icon.setEnabled(this.CurrentSettings.FPS)
         this.topbarController.Ping_Icon.setEnabled(this.CurrentSettings.PING)
         this.topbarController.Region_Icon.setEnabled(this.CurrentSettings.REG)
-
 
         // Start rendering
         Iris.Connect(() => this.render())

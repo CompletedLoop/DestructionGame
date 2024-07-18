@@ -7,7 +7,7 @@ import { RunService, Players } from "services";
 	tag: "character",
 	predicate: (instance) => instance === Players.LocalPlayer.Character
 })
-export class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {
+export default class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {
 	onStart() {
 	}
 

@@ -56,10 +56,5 @@ export class PlayerDataHandler implements OnStart {
 			player.leaderstats.Kills.Value = kills
 			log(kills)
 		})
-
-		// task.wait(3)
-		// while (task.wait(1)) {
-		// 	this.dataService.setProfileData(player, "Kills", this.dataService.getProfileData(player).Kills + 1)
-		// }
 	}
 }

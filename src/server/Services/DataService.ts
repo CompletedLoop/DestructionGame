@@ -5,28 +5,32 @@ import { Profile } from "@rbxts/profileservice/globals";
 import { plr } from "types/Instances/plr";
 import { Logger } from "shared/Modules/Logger";
 import Signal from "@rbxts/goodsignal";
+import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 
 const log = new Logger("DataService").Logger
 
+const PlayerSetttingsDefaults: PlayerSettings = {
+	AutoRun: false,
+
+	Shadows: true,
+	DestructionFX: true,
+	
+	FXVolume: .5,
+	
+	KillSoundID: 0,
+	FOV: 75,
+	
+	FPS: true,
+	PING: false,
+	REG: true
+}
 export const ProfileTemplateDefaults = {
 	Kills: 0,
 	Money: 0,
 	
 	Characters: [],
 	
-	PlayerSettings: {
-		Shadows: true,
-		DestructionFX: true,
-		
-		FXVolume: .5,
-		
-		KillSoundID: 0,
-		FOV: 75,
-		
-		FPS: true,
-		PING: false,
-		REG: true
-	}
+	PlayerSettings: PlayerSetttingsDefaults
 }
 
 export type ProfileTemplate = typeof ProfileTemplateDefaults
