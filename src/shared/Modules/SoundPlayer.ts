@@ -6,7 +6,7 @@ const SoundPartCache = new PartCacheModule(ReplicatedStorage.SoundPart, 150)
 SoundPartCache.SetCacheParent(Workspace.FX.SFX)
 
 export default class SoundPlayer {
-	static async PlaySoundAtPosition(id: string, position: Vector3) {
+	static PlaySoundAtPosition(id: string, position: Vector3) {
 		const SoundPart = SoundPartCache.GetPart()
 
 		SoundPart.Position = position

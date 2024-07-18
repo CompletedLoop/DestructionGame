@@ -1,5 +1,5 @@
 import { Lighting, Players, Workspace } from "@rbxts/services";
-import { Controller, OnStart } from "@flamework/core";
+import { Controller, OnInit, OnStart } from "@flamework/core";
 import { Logger } from "shared/Modules/Logger";
 
 // Iris types
@@ -23,10 +23,10 @@ const InitialPanelSize = new Vector2(350, 350)
 const InitialPanelPosition = ScreenSize.div(2).sub(InitialPanelSize.div(2))
 
 @Controller({})
-export class SettingsController implements OnStart {
+export class SettingsController implements OnStart, OnInit {
     constructor(private TopbarController: TopbarController, private readonly topbarController: TopbarController) {}
 
-    private CurrentSettings!: PlayerSettings
+    public CurrentSettings!: PlayerSettings
 
     private WindowState = Iris.State(false);
 
@@ -47,9 +47,17 @@ export class SettingsController implements OnStart {
 
     private render(){
         Iris.Window(["Settings Panel"], {isOpened: this.WindowState, position: InitialPanelPosition, size: InitialPanelSize}); {
+            // Game
+            Iris.Tree(["Game"], {isUncollapsed: true}); {
+                Iris.Checkbox(["AutoRun"], {isChecked: this.CurrentSettings.AutoRun}).state.isChecked.onChange((value: boolean) => {
+                    this.updateSetting("AutoRun", value)
+                })
+            } Iris.End()
+
+            Iris.Separator()
+
             // Performance
             Iris.Tree(["Performance"], {isUncollapsed: true}); {
-                
                 Iris.Checkbox(["Shadows"], {isChecked: this.CurrentSettings.Shadows}).state.isChecked.onChange((value: boolean) => {
                     Lighting.GlobalShadows = value
                     this.updateSetting("Shadows", value)
@@ -108,16 +116,19 @@ export class SettingsController implements OnStart {
         } Iris.End()
     }
 
+    onInit(): void | Promise<void> {
+    }
+    
     onStart(): void {
         task.wait(1) // Wait so things can load
-
+    
         // Load settings then render settings panel
         while (!this.CurrentSettings) {
             this.loadSetttings()
-
+    
             if (this.CurrentSettings) break
         }
-        
+
         // Set values to loaded settings
         Lighting.GlobalShadows = this.CurrentSettings.Shadows
 

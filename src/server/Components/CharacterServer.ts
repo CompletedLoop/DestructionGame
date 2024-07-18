@@ -7,8 +7,17 @@ import { Character } from "@rbxts/wcs";
 import { Base } from "shared/Movesets/Base";
 import { Stun } from "shared/StatusEffects/Stun";
 
-@Component({tag: "character"})
-export default class CharacterServer extends BaseComponent<{}, character> implements OnStart {
+interface CharacterAttributes {
+	SpeedMultiplier: number
+}
+
+@Component({
+	tag: "character",
+	defaults: {
+		SpeedMultiplier: 1,
+	}
+})
+export default class CharacterServer extends BaseComponent<CharacterAttributes, character> implements OnStart {
 	onStart() {
 		RunService.Stepped.Wait()
 		

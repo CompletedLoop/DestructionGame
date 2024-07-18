@@ -23,7 +23,7 @@ interface Metadata {
 }
 
 @SkillDecorator
-export class m1 extends Skill {
+export default class m1 extends Skill {
     // Skill config
 	declare protected CheckedByOthers: true;
 	protected MutualExclusives: Constructor<AnyStatus>[] = [

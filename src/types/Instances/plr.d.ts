@@ -1,3 +1,5 @@
+import { character } from "./character"
+
 export interface plr extends Player {
 	leaderstats: Folder & {
 		Money: NumberValue,
@@ -5,4 +7,6 @@ export interface plr extends Player {
 	},
 
 	PlayerGui: PlayerGui
+
+	Character: character
 }

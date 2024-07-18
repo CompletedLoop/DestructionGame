@@ -5,7 +5,7 @@ import TimedConnection from "shared/Modules/TimedConnection";
 import { Players, RunService, Workspace } from "@rbxts/services";
 import { Functions } from "client/network";
 
-@Controller({})
+@Controller({loadOrder: 0})
 export class TopbarController implements OnStart {
     SettingsController!: SettingsController;
 

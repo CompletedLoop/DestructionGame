@@ -61,7 +61,7 @@ export default class VoxelsController implements OnStart {
 
 			voxel.CustomPhysicalProperties = new PhysicalProperties(
 				voxel.CurrentPhysicalProperties.Density,
-				0.3,
+				0.2,
 				voxel.CurrentPhysicalProperties.Elasticity
 			)
 
