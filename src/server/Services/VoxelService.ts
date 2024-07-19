@@ -10,7 +10,7 @@ const SoundPartCache = new PartCacheModule(ReplicatedStorage.SoundPart, 100)
 SoundPartCache.SetCacheParent(Workspace.FX.SFX)
 
 @Service({})
-export class VoxelService {
+export default class VoxelService {
 	public VoxelizeInRadius(radius: number, cframe: CFrame, voxel_size: number, shape?: Enum.PartType): VoxelInfoPacket {
 		let voxels = VoxBreaker.CreateHitbox(Vector3.one.mul(radius), cframe, shape || Enum.PartType.Ball, voxel_size, Constants.VOXEL_LIFETIME)
 		return {

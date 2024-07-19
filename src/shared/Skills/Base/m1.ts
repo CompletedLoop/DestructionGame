@@ -1,113 +1,108 @@
 import { ReplicatedStorage, RunService } from "services";
 import { AnyStatus, Message, Skill, SkillDecorator, StatusEffect } from "@rbxts/wcs";
+import { Components } from "@flamework/components";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
+import { Dependency } from "@flamework/core"
+
 import { Blocking } from "shared/StatusEffects/Blocking";
 import { Stun } from "shared/StatusEffects/Stun";
 import { Ragdolled } from "shared/StatusEffects/Ragdolled";
-import { Attacking } from "shared/StatusEffects/Attacking";
 import { character } from "types/Instances/character";
-import { Dependency } from "@flamework/core"
-import type { VoxelService } from "server/Services/VoxelService";
 import { Logger } from "shared/Modules/Logger";
 import { Make } from "@rbxts/altmake";
+import Attacking from "shared/StatusEffects/Attacking";
 import Hitbox from "shared/Luau/Hitbox";
 import SoundPlayer from "shared/Modules/SoundPlayer";
+
+import type VoxelService from "server/Services/VoxelService";
+import type CharacterServer from "server/Components/CharacterServer";
 
 const log = new Logger("M1").Logger
 const m1_anims = ReplicatedStorage.Animations.m1s
 
 const m1_sound_folder = ReplicatedStorage.Sounds.Base.M1
 
-interface Metadata {
-	Combo: number
-}
-
 @SkillDecorator
 export default class m1 extends Skill {
     // Skill config
-	declare protected CheckedByOthers: true;
+	declare protected CheckedByOthers: false
 	protected MutualExclusives: Constructor<AnyStatus>[] = [
 		Stun, Blocking, Ragdolled, Attacking
-	];
+	]
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	combo: number = 1
-    HumanoidRoot: Part = (this.Character.Instance as character).HumanoidRootPart
+	private Combo: number = 1
+    private readonly HumanoidRoot: Part = (this.Character.Instance as character).HumanoidRootPart
 	protected OnConstruct(): void {}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	last_m1: number = 0
-	attackingSE: StatusEffect = new Attacking(this.Character)
-	voxelService!: VoxelService
+	private LastM1: number = 0
 
-    HitboxPart!: Part
-    HitboxClass!: Hitbox;
+	declare private AttackingSE: StatusEffect 
+	declare private VoxelService: VoxelService
+
+    declare private HitboxPart: Part
+    declare private HitboxClass: Hitbox;
 
 	protected OnConstructServer(): void {
-		this.voxelService = Dependency<VoxelService>()
+		// Get Server Dependencies
+		this.VoxelService = Dependency<VoxelService>()
+		this.AttackingSE = Dependency<Components>().getComponent<CharacterServer>(this.Character.Instance)?.AttackingSE as Attacking
 
+		// Create and Connect Hitbox
         this.HitboxPart = Make("Part", { Transparency: .8, BrickColor: BrickColor.Red(), Size: new Vector3(3, 6, 4) })
         this.HitboxClass = new Hitbox([this.HitboxPart])
         this.HitboxClass.PlayerEntered.Connect((...args) => this.OnHitboxHit(...args))
 	}
 
 	public OnStartServer(): void {
-		if (this.Character.Humanoid.Health < 1) this.End()
-			
-		let last_m1 = tick() - this.last_m1
-		if (last_m1 >= 1.5) {this.set_combo(1)}
-		
-		let cooldown = .45	
-		if (this.combo === m1_anims.GetChildren().size()) cooldown = 1
+		this.Combo = tick() - this.LastM1 > 1.5? 1 : this.Combo 
+		const cooldown = this.Combo === m1_anims.GetChildren().size()? 1 : .45	
 
-		this.last_m1 = tick()
-		this.attackingSE.Start()
+		this.LastM1 = tick()
+		this.AttackingSE.Start()
 
-		SoundPlayer.PlaySoundAtPosition(m1_sound_folder.Swing.SoundId, this.HumanoidRoot.Position)
+		SoundPlayer.PlaySoundAtPosition(
+			m1_sound_folder.Swing.SoundId,
+			this.HumanoidRoot.Position
+		)
 
-		this.StartClient(this.combo)
+		this.StartClient(this.Combo)
 		this.ApplyCooldown(cooldown)
 		
 		task.delay(.4, () => {
-			this.attackingSE.Stop()
-			
-			this.set_combo(this.combo + 1)
-			if (this.combo > m1_anims.GetChildren().size()) {
-				this.set_combo(1)
-			}
+			this.AttackingSE.Stop()
+			this.Combo = this.Combo + 1 > m1_anims.GetChildren().size()? 1 : this.Combo + 1
 		})
 	}
 
     private OnHitboxHit(character: character, part: Part) {
-        if (character === this.Character.Instance) return
-        print(character)
+        if (character !== this.Character.Instance) {
+			log(`Hit ${character}`)
+		}
     }
 
 	@Message({Type: "Event", Destination: "Server"})
 	protected Hitbox() {
+		// Calculate Hitbox Coordinate Frame
 		let root_cf = this.HumanoidRoot.CFrame
 		let target = root_cf.Position.add(root_cf.LookVector.mul(4)).add(new Vector3(0, 1, 0))
 		let cf = CFrame.lookAlong(target, root_cf.LookVector)
 
+		// Trigger Hitbox
         this.HitboxPart.CFrame = cf
         this.HitboxClass.Enable(.2)
 
-        // If last m1 in combo then trigger voxel hitbox
-		if (this.combo === m1_anims.GetChildren().size()) {
-			let voxel_packet = this.voxelService.VoxelizeInRadius(5, cf, 2)
+        // If the last m1 in combo then trigger voxel hitbox
+		if (this.Combo === m1_anims.GetChildren().size()) {
+			let voxel_packet = this.VoxelService.VoxelizeInRadius(5, cf, 2)
 			voxel_packet.velocity = this.HumanoidRoot.CFrame.LookVector.mul(20)
-			this.voxelService.PassVoxelsToClients(voxel_packet)
+			this.VoxelService.PassVoxelsToClients(voxel_packet)
 		}
 	}
 
-	private set_combo(value: number): void {
-		this.combo = value
-		this.SetMetadata({Combo: this.combo} as never)
-	}
-
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	m1_anims!: AnimationTrack[]
-
+	declare private m1_anims: AnimationTrack[]
 	protected OnConstructClient(): void {
 		// Load animations
 		const animator = this.Character.Humanoid.FindFirstChildOfClass("Animator") as Animator
@@ -122,11 +117,6 @@ export default class m1 extends Skill {
 
 			// Trigger event to server to fire hitbox
 			anim.GetMarkerReachedSignal("Hitbox").Connect(() => this.Hitbox())
-		})
-
-		// Metadata
-		this.MetadataChanged.Connect((data) => {
-			this.combo = (data as unknown as Metadata).Combo
 		})
 	}
 

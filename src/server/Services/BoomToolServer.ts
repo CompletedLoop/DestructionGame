@@ -3,7 +3,7 @@ import { Events } from "server/network";
 import { plr } from "types/Instances/plr";
 import { Players } from "services";
 import VoxelDestruct from "shared/Luau/VoxelDestruct";
-import { VoxelService } from "./VoxelService";
+import VoxelService from "./VoxelService";
 
 @Service({})
 export class BoomToolServer implements OnStart {
