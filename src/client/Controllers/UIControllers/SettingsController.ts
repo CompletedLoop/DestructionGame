@@ -45,6 +45,13 @@ export class SettingsController implements OnStart, OnInit {
         Events.UpdatePlayerSettings(this.CurrentSettings)
     }
 
+    private bindToSetting(Setting: keyof PlayerSettings, State: State<unknown>, callback: (value: any) => void) {
+        State.onChange((value: any) => {
+            this.updateSetting(Setting, value)
+            callback(value)
+        })
+    }
+
     private render(){
         Iris.Window(["Settings Panel"], {isOpened: this.WindowState, position: InitialPanelPosition, size: InitialPanelSize}); {
             // Game
@@ -58,9 +65,8 @@ export class SettingsController implements OnStart, OnInit {
 
             // Performance
             Iris.Tree(["Performance"], {isUncollapsed: true}); {
-                Iris.Checkbox(["Shadows"], {isChecked: this.CurrentSettings.Shadows}).state.isChecked.onChange((value: boolean) => {
+                this.bindToSetting("Shadows", Iris.Checkbox(["Shadows"], {isChecked: this.CurrentSettings.Shadows}).state.isChecked, (value) => {
                     Lighting.GlobalShadows = value
-                    this.updateSetting("Shadows", value)
                 })
 
                 Iris.Checkbox(["Destruction FX"], {isChecked: this.CurrentSettings.DestructionFX}).state.isChecked.onChange((value: boolean) => {
