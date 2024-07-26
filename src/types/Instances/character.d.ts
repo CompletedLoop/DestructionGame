@@ -6,4 +6,5 @@ export interface character extends Model {
 	HumanoidRootPart: Part & {
 		RootJoint: Motor6D
 	},
+	IsRagdoll: BoolValue
 }

@@ -14,9 +14,8 @@ function getServerRegion(): void {
 	}
 }
 
-
-// Make sure that the server region is visible
-while (task.wait(5)) {
+// Make sure that the server region is visible if the previous attempt was a failure
+while (task.wait(30)) {
 	pcall(getServerRegion)
 	if (Workspace.GetAttribute("Region")) break
 }

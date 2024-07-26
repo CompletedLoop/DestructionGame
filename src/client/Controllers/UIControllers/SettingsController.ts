@@ -23,7 +23,7 @@ const InitialPanelSize = new Vector2(350, 350)
 const InitialPanelPosition = ScreenSize.div(2).sub(InitialPanelSize.div(2))
 
 @Controller({})
-export class SettingsController implements OnStart, OnInit {
+export default class SettingsController implements OnStart {
     constructor(private TopbarController: TopbarController, private readonly topbarController: TopbarController) {}
 
     public CurrentSettings!: PlayerSettings
@@ -120,9 +120,6 @@ export class SettingsController implements OnStart, OnInit {
             } Iris.End()
 
         } Iris.End()
-    }
-
-    onInit(): void | Promise<void> {
     }
     
     onStart(): void {

@@ -5,8 +5,8 @@ import { RunService, Players, UserInputService, Workspace } from "services";
 import GetWCS_Character from "shared/Util/GetWSC_Character";
 import { Character, UnknownSkill } from "@rbxts/wcs";
 import { plr } from "types/Instances/plr";
-import { SettingsController } from "client/Controllers/UIControllers/SettingsController";
-import { InputController } from "client/Controllers/InputController";
+import SettingsController from "client/Controllers/UIControllers/SettingsController";
+import InputController from "client/Controllers/InputController";
 
 // Skills
 import m1 from "shared/Skills/Base/m1";

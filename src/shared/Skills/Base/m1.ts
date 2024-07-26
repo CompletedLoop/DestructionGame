@@ -4,16 +4,19 @@ import { Components } from "@flamework/components";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
 import { Dependency } from "@flamework/core"
 
-import { Blocking } from "shared/StatusEffects/Blocking";
-import { Stun } from "shared/StatusEffects/Stun";
-import { Ragdolled } from "shared/StatusEffects/Ragdolled";
+import Attacking from "shared/StatusEffects/Attacking";
+import Blocking from "shared/StatusEffects/Blocking";
+import Stun from "shared/StatusEffects/Stun";
+import Ragdolled from "shared/StatusEffects/Ragdolled";
+
 import { character } from "types/Instances/character";
+
 import { Logger } from "shared/Modules/Logger";
 import { Make } from "@rbxts/altmake";
-import Attacking from "shared/StatusEffects/Attacking";
-import Hitbox from "shared/Luau/Hitbox";
 import SoundPlayer from "shared/Modules/SoundPlayer";
+import Hitbox from "shared/Luau/Hitbox";
 
+// Server Dependencies
 import type VoxelService from "server/Services/VoxelService";
 import type CharacterServer from "server/Components/CharacterServer";
 
@@ -31,12 +34,14 @@ export default class m1 extends Skill {
 	]
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	private Combo: number = 1
+	private LastM1: number = 0
+
     private readonly HumanoidRoot: Part = (this.Character.Instance as character).HumanoidRootPart
 	protected OnConstruct(): void {}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	private LastM1: number = 0
 
 	declare private AttackingSE: StatusEffect 
 	declare private VoxelService: VoxelService
@@ -56,20 +61,25 @@ export default class m1 extends Skill {
 	}
 
 	public OnStartServer(): void {
+		// Determine the current combo and the cooldown length
 		this.Combo = tick() - this.LastM1 > 1.5? 1 : this.Combo 
 		const cooldown = this.Combo === m1_anims.GetChildren().size()? 1 : .45	
 
+		// Track the last m1 and apply the attacking status
 		this.LastM1 = tick()
 		this.AttackingSE.Start()
 
+		// Play a swing sound
 		SoundPlayer.PlaySoundAtPosition(
 			m1_sound_folder.Swing.SoundId,
 			this.HumanoidRoot.Position
 		)
 
+		// Tell client that the m1 is approved and initiat the m1
 		this.StartClient(this.Combo)
 		this.ApplyCooldown(cooldown)
 		
+		// After a delay, remove the Attacking status and increment the combo
 		task.delay(.4, () => {
 			this.AttackingSE.Stop()
 			this.Combo = this.Combo + 1 > m1_anims.GetChildren().size()? 1 : this.Combo + 1
@@ -104,11 +114,13 @@ export default class m1 extends Skill {
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	declare private m1_anims: AnimationTrack[]
 	protected OnConstructClient(): void {
-		// Load animations
 		const animator = this.Character.Humanoid.FindFirstChildOfClass("Animator") as Animator
-		RunService.Stepped.Wait()
-		RunService.Stepped.Wait()
 
+		// Roblox is a pain when it comes things not loading
+		RunService.Stepped.Wait()
+		RunService.Stepped.Wait()
+		
+		// Load animations into a array that can be indexed by the current combo
 		this.m1_anims = []
 		m1_anims.GetChildren().forEach((m1) => {
 			let anim = animator.LoadAnimation(m1 as Animation)
