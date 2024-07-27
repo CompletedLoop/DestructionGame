@@ -3,8 +3,10 @@ import { PlayerSettings} from "types/Interfaces/PlayerSettings";
 import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 
 interface ClientToServerEvents {
-	BoomTool(cframe: CFrame, radius: number, power: number): void,
+	BoomTool(cframe: CFrame, radius: number, power: number): void
 	UpdatePlayerSettings(PlayerSettings: PlayerSettings): void
+	ChangeMoveset(Moveset: string): void
+	ReplicateCharacterTilt: Networking.Unreliable<(JointC0: CFrame) => void>
 }
 
 interface ServerToClientEvents {

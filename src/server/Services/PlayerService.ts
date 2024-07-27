@@ -6,6 +6,7 @@ import { Make } from "@rbxts/altmake";
 import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "server/network";
 import { PlayerSettings } from "types/Interfaces/PlayerSettings";
+import { character } from "types/Instances/character";
 
 const log = new Logger("PlayerService").Logger
 
@@ -13,7 +14,7 @@ const log = new Logger("PlayerService").Logger
 export class PlayerDataHandler implements OnStart {
 	constructor(private readonly dataService: DataService) {}
 
-	public onStart() {
+	onStart() {
 		task.spawn(() => Players.GetPlayers().forEach((player: Player) => this.playerAdded(player as plr)))
 		Players.PlayerAdded.Connect((player) => this.playerAdded(player as plr))
 		Players.PlayerRemoving.Connect((player) => this.playerLeaving(player as plr))
@@ -26,8 +27,11 @@ export class PlayerDataHandler implements OnStart {
 		Events.UpdatePlayerSettings.connect((player: Player, PlayerSettings: PlayerSettings) => {
 			this.dataService.setProfileData(player, "PlayerSettings", PlayerSettings)
 		})
+
+		Events.ReplicateCharacterTilt.connect((player: Player, JointC0: CFrame) => this.replicateCharacterTilt(player, JointC0))
     }
 
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private playerAdded(player: plr) {
 		player.CharacterAdded.Connect((character) => {
 			character.AddTag(`character`)
@@ -56,5 +60,15 @@ export class PlayerDataHandler implements OnStart {
 			player.leaderstats.Kills.Value = kills
 			log(kills)
 		})
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	private onMovesetChangeRequest(player: Player, Moveset: string) {}
+
+	private replicateCharacterTilt(player: Player, JointC0: CFrame) {
+		const character = player.Character as character
+		if (character) {
+			
+		}
 	}
 }

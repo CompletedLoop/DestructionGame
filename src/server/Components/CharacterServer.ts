@@ -51,6 +51,7 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 			if (part.IsA("BasePart")) part.CollisionGroup = "Players"
 		})
 		
+		// Delete component when character is destroyed
 		this.instance.GetPropertyChangedSignal("Parent").Connect(() => {
 			if (!this.instance.Parent)
 				this.destroy()

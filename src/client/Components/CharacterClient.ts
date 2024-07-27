@@ -14,6 +14,9 @@ import m1 from "shared/Skills/Base/m1";
 // Status Effects
 import Attacking from "shared/StatusEffects/Attacking";
 import Running from "shared/StatusEffects/Running";
+import Signal from "@rbxts/goodsignal";
+import TimedConnection from "shared/Modules/TimedConnection";
+import { Events } from "client/network";
 
 const player = Players.LocalPlayer as plr
 
@@ -27,10 +30,14 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	private Initialized = false
 
+	private ReplicateTiltSignal = new Signal<(JointC0: CFrame) => void>()
+
 	constructor(private readonly settingsController: SettingsController, private readonly inputController: InputController) { super() }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	onStart() {
+		new TimedConnection(this.ReplicateTiltSignal, (JointC0: CFrame) => Events.ReplicateCharacterTilt(JointC0), .1)
+
 		while (!(this.instance.Parent === Workspace.Characters) && !(this.instance.GetAttribute("Loaded"))) { task.wait() }
 		task.wait(2)
 		
@@ -71,7 +78,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-	target_tilt = 8
+	target_tilt = 8.5
 	joint_motor = this.instance.HumanoidRootPart.RootJoint;
 	original_C0 = this.joint_motor.C0;
 	onRender(delta: number) {
@@ -79,6 +86,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 		let zdir = -this.instance.Humanoid.MoveDirection.Dot(this.instance.HumanoidRootPart.CFrame.RightVector)
 		let target = this.original_C0.mul(CFrame.Angles(math.rad(this.target_tilt * xdir),math.rad(this.target_tilt * zdir),0))
 
-		this.joint_motor.C0 = this.joint_motor.C0.Lerp(target, 25 * delta)
+		this.joint_motor.C0 = this.joint_motor.C0.Lerp(target, 30 * delta)
+		this.ReplicateTiltSignal.Fire(this.joint_motor.C0)
 	}
 }
