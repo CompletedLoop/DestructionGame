@@ -34,7 +34,6 @@ export default class m1 extends Skill {
 	]
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-
 	private Combo: number = 1
 	private LastM1: number = 0
 
@@ -42,7 +41,6 @@ export default class m1 extends Skill {
 	protected OnConstruct(): void {}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
-
 	declare private AttackingSE: StatusEffect 
 	declare private VoxelService: VoxelService
 
@@ -95,17 +93,17 @@ export default class m1 extends Skill {
 	@Message({Type: "Event", Destination: "Server"})
 	protected Hitbox() {
 		// Calculate Hitbox Coordinate Frame
-		let root_cf = this.HumanoidRoot.CFrame
-		let target = root_cf.Position.add(root_cf.LookVector.mul(4)).add(new Vector3(0, 1, 0))
-		let cf = CFrame.lookAlong(target, root_cf.LookVector)
+		let HumanoindRootCFrame = this.HumanoidRoot.CFrame
+		let TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(4)).add(new Vector3(0, 1, 0))
+		let HitboxCFrame = CFrame.lookAlong(TargetPosition, HumanoindRootCFrame.LookVector)
 
 		// Trigger Hitbox
-        this.HitboxPart.CFrame = cf
+        this.HitboxPart.CFrame = HitboxCFrame
         this.HitboxClass.Enable(.2)
 
         // If the last m1 in combo then trigger voxel hitbox
 		if (this.Combo === m1_anims.GetChildren().size()) {
-			let voxel_packet = this.VoxelService.VoxelizeInRadius(5, cf, 2)
+			let voxel_packet = this.VoxelService.VoxelizeInRadius(5, HitboxCFrame, 2)
 			voxel_packet.velocity = this.HumanoidRoot.CFrame.LookVector.mul(20)
 			this.VoxelService.PassVoxelsToClients(voxel_packet)
 		}

@@ -7,6 +7,7 @@ import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "server/network";
 import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 import { character } from "types/Instances/character";
+import GetWCS_Character from "shared/Util/GetWSC_Character";
 
 const log = new Logger("PlayerService").Logger
 
@@ -29,6 +30,7 @@ export class PlayerDataHandler implements OnStart {
 		})
 
 		Events.ReplicateCharacterTilt.connect((player: Player, JointC0: CFrame) => this.replicateCharacterTilt(player, JointC0))
+		Events.ChangeMoveset.connect((player: Player, Moveset: string) => this.onMovesetChangeRequest(player, Moveset))
     }
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -39,6 +41,8 @@ export class PlayerDataHandler implements OnStart {
 
 		const player_profile = this.dataService.loadPlayerData(player) as PlayerProfile
 		this.generateLeaderstatsForPlayer(player, player_profile)
+		
+		player.SetAttribute("LastMovesetChange", 0)
 	}
 
     private playerLeaving(player: plr) {
@@ -63,7 +67,20 @@ export class PlayerDataHandler implements OnStart {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private onMovesetChangeRequest(player: Player, Moveset: string) {}
+	private onMovesetChangeRequest(player: Player, Moveset: string) {
+		log("Moveset Request Recieved")
+		if (tick() - (player.GetAttribute("LastMovesetChange") as number) < 10) {
+			log("Moveset Change Denied")
+			return
+		}
+
+		GetWCS_Character(player.Character as character)?.Destroy()
+		task.wait(.2)
+		
+		const profile = this.dataService.getProfileData(player)
+		profile.CurrentMoveset = Moveset
+		player.LoadCharacter()
+	}
 
 	private replicateCharacterTilt(player: Player, JointC0: CFrame) {
 		const character = player.Character as character

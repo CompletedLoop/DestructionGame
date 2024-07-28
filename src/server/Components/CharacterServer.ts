@@ -19,31 +19,34 @@ interface CharacterAttributes {
 	}
 })
 export default class CharacterServer extends BaseComponent<CharacterAttributes, character> implements OnStart {
+	declare public WSC_Character: Character
 	declare public AttackingSE: Attacking
 
 	onStart() {
-		RunService.Stepped.Wait()
+		while (!(this.instance.Parent === Workspace)) {
+			task.wait()
+		}
 		
 		// Parent the Character instance to Characters folder
 		this.instance.Parent = Workspace.Characters
 		
 		// Create WSC Character
-		const WSC_Character = new Character(this.instance)
+		this.WSC_Character = new Character(this.instance)
 
-		// Create Attacking Status Effect
-		this.AttackingSE = new Attacking(WSC_Character)
+		// Create Status Effect
+		this.AttackingSE = new Attacking(this.WSC_Character)
 
 		// Apply base moveset
-		WSC_Character.ApplySkillsFromMoveset(Base)
+		this.WSC_Character.ApplySkillsFromMoveset(Base)
 		
 		// TODO Apply chosen moveset
 		
-		// Replicate to client
+		// Replicate to client that everything is setup on ther server
 		this.instance.SetAttribute("Loaded", true)
 
 		// Destroy when player dies and credit the killer
 		this.instance.Humanoid.Died.Connect(() => {
-			WSC_Character.Destroy()
+			this.WSC_Character.Destroy()
 		})
 		
 		// Add all character parts to collision group

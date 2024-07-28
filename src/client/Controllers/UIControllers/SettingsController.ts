@@ -24,9 +24,9 @@ const InitialPanelPosition = ScreenSize.div(2).sub(InitialPanelSize.div(2))
 
 @Controller({})
 export default class SettingsController implements OnStart {
-    constructor(private TopbarController: TopbarController, private readonly topbarController: TopbarController) {}
+    declare public CurrentSettings: PlayerSettings
 
-    public CurrentSettings!: PlayerSettings
+    constructor(private TopbarController: TopbarController, private readonly topbarController: TopbarController) {}
 
     private WindowState = Iris.State(false);
 
@@ -128,8 +128,6 @@ export default class SettingsController implements OnStart {
         // Load settings then render settings panel
         while (!this.CurrentSettings) {
             this.loadSetttings()
-    
-            if (this.CurrentSettings) break
         }
 
         // Set values to loaded settings

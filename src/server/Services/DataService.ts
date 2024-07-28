@@ -26,6 +26,7 @@ const PlayerSetttingsDefaults: PlayerSettings = {
 }
 export const ProfileTemplateDefaults = {
 	Kills: 0,
+	CurrentMoveset: "Roach",
 	Money: 0,
 	
 	Characters: [],
@@ -86,7 +87,7 @@ export class DataService {
 		const player_profile = this.Profiles[player.UserId]
 		assert(player_profile, `Profile for ${player.Name} does not exist`)
 
-		player_profile.Data[index] = value
+		player_profile.Data[index] = value as never
 
 		// Fire connections
 		let player_data_connections = this.Connections[player.UserId]

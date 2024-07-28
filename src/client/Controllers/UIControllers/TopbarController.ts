@@ -3,12 +3,12 @@ import { Icon } from "@rbxts/topbar-plus";
 import SettingsController from "./SettingsController";
 import TimedConnection from "shared/Modules/TimedConnection";
 import { Players, ReplicatedStorage, RunService, StarterGui, Workspace } from "@rbxts/services";
-import { Functions } from "client/network";
+import { Events, Functions } from "client/network";
 import { Logger } from "shared/Modules/Logger";
 
 const log = new Logger("TopbarController").Logger
 
-@Controller({loadOrder: 0})
+@Controller({})
 export class TopbarController implements OnStart {
     SettingsController!: SettingsController;
 
@@ -88,7 +88,8 @@ export class TopbarController implements OnStart {
                     const Button = new Icon().setLabel(Moveset.Name).oneClick(true)
                     MovesetList.push(Button)
                     Button.selected.Connect(() => {
-                        log(`Requested Moveset ${Moveset.Name}`)                      
+                        log(`Requested Moveset ${Moveset.Name}`)                 
+                        Events.ChangeMoveset(Moveset.Name)
                     })
                 }
             }
