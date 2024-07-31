@@ -1,4 +1,4 @@
-import { RunService, Workspace } from "services";
+import { Players, RunService, Workspace } from "services";
 import { OnStart } from "@flamework/core";
 import { Component, BaseComponent, Components } from "@flamework/components";
 
@@ -7,6 +7,8 @@ import { Character, UnknownSkill } from "@rbxts/wcs";
 import { Base } from "shared/Movesets/Base";
 
 import Attacking from "shared/StatusEffects/Attacking";
+import { plr } from "types/Instances/plr";
+import { LoadCharacter } from "shared/Modules/LoadCharacter";
 
 interface CharacterAttributes {
 	SpeedMultiplier: number
@@ -23,10 +25,10 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 	declare public AttackingSE: Attacking
 
 	onStart() {
-		while (!(this.instance.Parent === Workspace)) {
-			task.wait()
-		}
-		
+		LoadCharacter(Players.GetPlayerFromCharacter(this.instance) as plr).andThen((character: character) => this.Initialize())
+	}
+
+	private Initialize() {
 		// Parent the Character instance to Characters folder
 		this.instance.Parent = Workspace.Characters
 		

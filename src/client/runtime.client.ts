@@ -1,9 +1,11 @@
-import { Workspace, Players, ReplicatedStorage, RunService } from "services"
+import { Workspace, Players, ReplicatedStorage, RunService, StarterGui } from "services"
 import { Flamework } from "@flamework/core";
 import { SetGlobalHook } from "shared/Modules/Logger";
 import { CreateClient } from "@rbxts/wcs";
 import { CmdrClient } from "@rbxts/cmdr";
 import Iris from "@rbxts/iris";
+import { GlobalEvents, GlobalFunctions } from "shared/network";
+import { Events } from "./network";
 
 RunService.Stepped.Wait()
 
@@ -26,6 +28,11 @@ Players.LocalPlayer.GetMouse().TargetFilter = Workspace.FX.Hitboxes
 // LOGGER
 SetGlobalHook(() => {
 	if (Workspace.GameConfig.GetAttribute("Debug")) return true
+})
+
+// NOTIFICATIONS
+Events.SendNotificationToPlayer.connect((NotificationInfo: SendNotificationConfig) => {
+	StarterGui.SetCore("SendNotification", NotificationInfo)
 })
 
 // FLAMEWORK

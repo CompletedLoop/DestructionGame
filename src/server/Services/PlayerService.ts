@@ -1,4 +1,4 @@
-import { Service, OnStart } from "@flamework/core";
+import { Service, OnStart, Dependency } from "@flamework/core";
 import { Players } from "services";
 import { plr } from "types/Instances/plr";
 import { DataService, PlayerProfile } from "./DataService";
@@ -8,6 +8,8 @@ import { Events, Functions } from "server/network";
 import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 import { character } from "types/Instances/character";
 import GetWCS_Character from "shared/Util/GetWSC_Character";
+import { Components } from "@flamework/components";
+import CharacterServer from "server/Components/CharacterServer";
 
 const log = new Logger("PlayerService").Logger
 
@@ -68,13 +70,18 @@ export class PlayerDataHandler implements OnStart {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private onMovesetChangeRequest(player: Player, Moveset: string) {
-		log("Moveset Request Recieved")
-		if (tick() - (player.GetAttribute("LastMovesetChange") as number) < 10) {
+		const difference = tick() - (player.GetAttribute("LastMovesetChange") as number)
+		if (difference < 10) {
 			log("Moveset Change Denied")
+			Events.SendNotificationToPlayer(player, {
+				Text: `Please wait ${tostring(math.round(10 - difference))} seconds.`,
+				Title: "Switching too Fast!",
+			})
 			return
 		}
 
 		GetWCS_Character(player.Character as character)?.Destroy()
+		player.SetAttribute("LastMovesetChange", tick())
 		task.wait(.2)
 		
 		const profile = this.dataService.getProfileData(player)

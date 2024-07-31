@@ -17,6 +17,7 @@ import Running from "shared/StatusEffects/Running";
 import Signal from "@rbxts/goodsignal";
 import TimedConnection from "shared/Modules/TimedConnection";
 import { Events } from "client/network";
+import { LoadCharacter } from "shared/Modules/LoadCharacter";
 
 const player = Players.LocalPlayer as plr
 
@@ -36,9 +37,10 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	onStart() {
-		// Wait for character to load TODO make this better
-		while (!(this.instance.Parent === Workspace.Characters) && !(this.instance.GetAttribute("Loaded"))) { task.wait(.2) }
+		LoadCharacter(player).andThen((character: character) => this.Initialize())
+	}
 
+	private Initialize() {
 		new TimedConnection(this.ReplicateTiltSignal, (JointC0: CFrame) => Events.ReplicateCharacterTilt(JointC0), .1)
 		
 		this.WCS_Character = GetWCS_Character(this.instance) as Character

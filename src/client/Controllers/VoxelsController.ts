@@ -1,11 +1,11 @@
 import { Workspace, ReplicatedStorage, TweenService, RunService } from "services";
 import { Controller, OnStart } from "@flamework/core";
-import { Events } from "client/network";
 import { Constants } from "shared/Constants";
 import { Logger } from "shared/Modules/Logger";
 import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 import TimedConnection from "shared/Modules/TimedConnection";
 import SoundPlayer from "shared/Modules/SoundPlayer";
+import { Events } from "client/network";
 
 const DestructionSounds = ReplicatedStorage.Sounds.DestructionSounds
 

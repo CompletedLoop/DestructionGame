@@ -3,8 +3,8 @@ import { Icon } from "@rbxts/topbar-plus";
 import SettingsController from "./SettingsController";
 import TimedConnection from "shared/Modules/TimedConnection";
 import { Players, ReplicatedStorage, RunService, StarterGui, Workspace } from "@rbxts/services";
-import { Events, Functions } from "client/network";
 import { Logger } from "shared/Modules/Logger";
+import { Events, Functions } from "client/network";
 
 const log = new Logger("TopbarController").Logger
 

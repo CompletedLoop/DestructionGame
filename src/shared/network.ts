@@ -13,7 +13,9 @@ interface ServerToClientEvents {
 	Voxels: {
 		HandleVoxels(voxel_packet: VoxelInfoPacket): void
 		ClearVoxels(): void
-	}
+	},
+
+	SendNotificationToPlayer(NotificationInfo: SendNotificationConfig): void
 }
 
 interface ClientToServerFunctions {

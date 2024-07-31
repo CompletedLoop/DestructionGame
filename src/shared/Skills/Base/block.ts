@@ -1,6 +1,6 @@
-import { Skill, SkillDecorator } from "@rbxts/wcs";
+import { HoldableSkill, Skill, SkillDecorator } from "@rbxts/wcs";
 
 @SkillDecorator
-export default class block extends Skill {
+export default class block extends HoldableSkill {
 	
 }

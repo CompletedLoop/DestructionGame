@@ -73,7 +73,7 @@ export default class m1 extends Skill {
 			this.HumanoidRoot.Position
 		)
 
-		// Tell client that the m1 is approved and initiat the m1
+		// Tell client that the m1 is approved and initiate the m1
 		this.StartClient(this.Combo)
 		this.ApplyCooldown(cooldown)
 		

@@ -1,4 +1,5 @@
 import { ReplicatedStorage, RunService, ScriptContext, ServerScriptService } from "@rbxts/services";
+import { GlobalEvents, GlobalFunctions } from "shared/network";
 import { Flamework } from "@flamework/core";
 import { CreateServer } from "@rbxts/wcs";
 import { Cmdr, CommandContext } from "@rbxts/cmdr";
