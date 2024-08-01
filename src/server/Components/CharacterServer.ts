@@ -8,7 +8,7 @@ import { Base } from "shared/Movesets/Base";
 
 import Attacking from "shared/StatusEffects/Attacking";
 import { plr } from "types/Instances/plr";
-import { LoadCharacter } from "shared/Modules/LoadCharacter";
+import { LoadCharacter } from "shared/Util/LoadCharacter";
 
 interface CharacterAttributes {
 	SpeedMultiplier: number
@@ -35,7 +35,7 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 		// Create WSC Character
 		this.WSC_Character = new Character(this.instance)
 
-		// Create Status Effect
+		// Create Status Effects
 		this.AttackingSE = new Attacking(this.WSC_Character)
 
 		// Apply base moveset

@@ -17,7 +17,7 @@ import Running from "shared/StatusEffects/Running";
 import Signal from "@rbxts/goodsignal";
 import TimedConnection from "shared/Modules/TimedConnection";
 import { Events } from "client/network";
-import { LoadCharacter } from "shared/Modules/LoadCharacter";
+import { LoadCharacter } from "shared/Util/LoadCharacter";
 
 const player = Players.LocalPlayer as plr
 
