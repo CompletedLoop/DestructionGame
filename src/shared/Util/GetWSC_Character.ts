@@ -2,7 +2,7 @@ import { Character } from "@rbxts/wcs";
 import { character } from "types/Instances/character";
 
 export default function GetWCS_Character(character: character) {
-	if (!character) return;
+	assert(character, "Character is nil")
 
 	while (!Character.GetCharacterFromInstance(character)) { task.wait() }
 

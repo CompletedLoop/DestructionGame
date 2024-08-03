@@ -56,11 +56,16 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	onTick(delta: number) {
 		if (!this.WCS_Character) return
+		if (!this.RunningSE) return
 		if (!this.settingsController.CurrentSettings) return
+		if (this.instance.GetAttribute("reloading")) {
+			this.instance.HumanoidRootPart.Anchored = true
+			return
+		}
 
 		/*
-		* Instead of connecting to an signal for when the play left-clicks, we check if the player is clicking
-		* every tick to allow the player to just hold down the mouse and m1 combo which other bg games do.
+		*	Instead of connecting to an signal for when the play left-clicks, we check if the player is clicking
+		*	every tick to allow the player to just hold down the mouse and m1 combo which other bg games do.
 		*/
 		if (UserInputService.IsMouseButtonPressed(Enum.UserInputType.MouseButton1)) {
 			if (!this.inputController.isTyping) {
@@ -70,10 +75,14 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 			}
 		}
 		
+		/*
+		*	Check on every frame if the player should be running and change the state of the character based on checks
+		*/
+		const running_state = this.RunningSE.GetState()
 		if (this.WCS_Character.Humanoid.MoveDirection.Dot(Workspace.Camera.CFrame.LookVector.mul(new Vector3(1, 0, 1)).Unit) > .45) {
 			if (this.settingsController.CurrentSettings.AutoRun || this.inputController.WKeyMode === 2) {
 				const is_attacking = this.WCS_Character.GetAllActiveStatusEffectsOfType(Attacking).size()
-				const is_running = this.RunningSE.GetState().IsActive 
+				const is_running = running_state.IsActive 
 				 
 				// Determine the speed of the running animaton
 				if (is_running) { 
@@ -92,7 +101,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 				}
 			}
 		} else {
-			if (this.RunningSE.GetState().IsActive) {
+			if (running_state.IsActive) {
 				this.RunningSE.Stop()
 			}
 		}

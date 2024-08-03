@@ -24,14 +24,13 @@ export class TopbarController implements OnStart {
         return os.clock() - now
     }
 
-    private MovesetSelectionIcon = new Icon().setLabel("Movesets")
     onStart(): void {
         task.wait(1) // wait a sec
         this.SettingsController = Dependency<SettingsController>()
 
         // Movesets Selection Icon
         this.loadMovesetSelectionList()
-
+        
         // Settings icon
         new Icon().setImage("13612120903").oneClick(true).selected.Connect(this.SettingsController.toggleSettingsPanel)
 
@@ -44,6 +43,7 @@ export class TopbarController implements OnStart {
     }
 
     private updateDebugIcons(dt: number) {
+        this.MovesetSelectionIcon.setEnabled(true)
         this.FPS_Icon.setLabel(`FPS: ${tostring(math.round(1/dt))}`)
 
         const ping = math.round(this.getPing() * 1000)
@@ -58,7 +58,10 @@ export class TopbarController implements OnStart {
         this.Region_Icon.setLabel((Workspace.GetAttribute("Region") as string) || "( ͡° ͜ʖ ͡°)")
     }
 
-    private async loadMovesetSelectionList() {
+    private MovesetSelectionIcon = new Icon().setLabel("Movesets")
+    private loadMovesetSelectionList() {
+        // const MovesetSelectionIcon = new Icon().setLabel("Movesets")
+
         /*
         *   Logic so that the selection doesnt get hidden by the chat
         *   and toggles the chat based if it was enabled or not

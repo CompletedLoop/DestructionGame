@@ -39,6 +39,7 @@
     "@rbxts/refx": "^0.3.2",
     "@rbxts/services": "^1.5.4",
     "@rbxts/topbar-plus": "^3.0.2",
+    "@rbxts/validate-tree": "^2.0.2",
     "@rbxts/wcs": "^2.1.3",
     "patch-package": "^8.0.0"
   }

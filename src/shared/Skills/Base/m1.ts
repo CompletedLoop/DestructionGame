@@ -77,11 +77,13 @@ export default class m1 extends Skill {
 		this.StartClient(this.Combo)
 		this.ApplyCooldown(cooldown)
 		
-		// After a delay, remove the Attacking status and increment the combo
-		task.delay(.4, () => {
-			this.AttackingSE.Stop()
-			this.Combo = this.Combo + 1 > m1_anims.GetChildren().size()? 1 : this.Combo + 1
-		})
+		Promise.delay(.4).andThen(this.advanceCombo)
+	}
+	
+	/** After a delay, remove the Attacking status and increment the combo */
+	private advanceCombo() {
+		this.AttackingSE.Stop()
+		this.Combo = this.Combo + 1 > m1_anims.GetChildren().size()? 1 : this.Combo + 1
 	}
 
     private OnHitboxHit(character: character, part: Part) {

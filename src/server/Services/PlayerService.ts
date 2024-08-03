@@ -69,7 +69,25 @@ export class PlayerDataHandler implements OnStart {
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 *	Reloads the player's character and ensures that the old character is deleted and does not cause a memory leak 
+	 */
+	public reloadPlayerCharacter(player: Player | plr) {
+		if (!player.Character) return
+
+		// Destroy the wsc character
+		GetWCS_Character(player.Character as character)?.Destroy()
+
+		// Destroy Character
+		player.Character.Destroy()
+		player.Character = undefined
+
+		// Finally load the new character
+		player.LoadCharacter()
+	}
+
 	private onMovesetChangeRequest(player: Player, Moveset: string) {
+		// Verify that the player is allowed to switch movesets
 		const difference = tick() - (player.GetAttribute("LastMovesetChange") as number)
 		if (difference < 10) {
 			log("Moveset Change Denied")
@@ -80,13 +98,14 @@ export class PlayerDataHandler implements OnStart {
 			return
 		}
 
-		GetWCS_Character(player.Character as character)?.Destroy()
 		player.SetAttribute("LastMovesetChange", tick())
-		task.wait(.2)
+		player.Character?.SetAttribute("reloading", true)
 		
 		const profile = this.dataService.getProfileData(player)
 		profile.CurrentMoveset = Moveset
-		player.LoadCharacter()
+		
+		task.wait(.5)
+		this.reloadPlayerCharacter(player)
 	}
 
 	private replicateCharacterTilt(player: Player, JointC0: CFrame) {
