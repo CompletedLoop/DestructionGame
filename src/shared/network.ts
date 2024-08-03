@@ -16,6 +16,8 @@ interface ServerToClientEvents {
 	},
 
 	SendNotificationToPlayer(NotificationInfo: SendNotificationConfig): void
+
+	AddCharacterComponent(): void
 }
 
 interface ClientToServerFunctions {

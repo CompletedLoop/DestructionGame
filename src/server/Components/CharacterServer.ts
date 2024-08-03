@@ -1,5 +1,5 @@
 import { Players, RunService, Workspace } from "services";
-import { OnStart } from "@flamework/core";
+import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent, Components } from "@flamework/components";
 
 import { character } from "types/Instances/character";
@@ -9,6 +9,7 @@ import { Base } from "shared/Movesets/Base";
 import Attacking from "shared/StatusEffects/Attacking";
 import { plr } from "types/Instances/plr";
 import LoadCharacter from "shared/Util/LoadCharacter";
+import { Events } from "server/network";
 
 interface CharacterAttributes {
 	SpeedMultiplier: number
@@ -24,13 +25,18 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 	declare public WSC_Character: Character
 	declare public AttackingSE: Attacking
 
+	private player = Players.GetPlayerFromCharacter(this.instance) as plr 
+
 	onStart() {
-		LoadCharacter(Players.GetPlayerFromCharacter(this.instance) as plr).andThen(this.Initialize)
+		LoadCharacter(this.player).andThen(this.Initialize)
 	}
 
 	private Initialize() {
 		// Parent the Character instance to Characters folder
 		this.instance.Parent = Workspace.Characters
+
+		// Freeze Player
+		this.instance.HumanoidRootPart.Anchored = true
 		
 		// Create WSC Character
 		this.WSC_Character = new Character(this.instance)
@@ -46,6 +52,10 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 		// Replicate to client that everything is setup on ther server
 		this.instance.SetAttribute("Loaded", true)
 
+		// Unfreeze and tell client to add its character component
+		this.instance.HumanoidRootPart.Anchored = false
+		Events.AddCharacterComponent(this.player)
+
 		// Destroy when player dies and credit the killer
 		this.instance.Humanoid.Died.Connect(() => {
 			this.WSC_Character.Destroy()
@@ -59,7 +69,7 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 		// Delete component when character is destroyed
 		this.instance.GetPropertyChangedSignal("Parent").Connect(() => {
 			if (!this.instance.Parent)
-				this.destroy()
+				Dependency<Components>().removeComponent<CharacterServer>(this.instance)
 		})
 	}
 }

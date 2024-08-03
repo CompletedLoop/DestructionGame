@@ -1,4 +1,4 @@
-import { OnRender, OnStart, OnTick } from "@flamework/core";
+import { Dependency, OnRender, OnStart, OnTick } from "@flamework/core";
 import { Component, BaseComponent, Components } from "@flamework/components";
 import { character } from "types/Instances/character"
 import { RunService, Players, UserInputService, Workspace } from "services";
@@ -22,7 +22,7 @@ import Signal from "@rbxts/goodsignal";
 const player = Players.LocalPlayer as plr
 
 @Component({
-	tag: "character",
+	// tag: "character",
 	predicate: (instance) => instance === Players.LocalPlayer.Character
 })
 export default class CharacterClient extends BaseComponent<{}, character> implements OnStart, OnRender, OnTick {
@@ -31,7 +31,10 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	private ReplicateTiltSignal = new Signal<(JointC0: CFrame) => void>()
 
-	constructor(private readonly settingsController: SettingsController, private readonly inputController: InputController) { super() }
+	constructor(
+		private readonly settingsController: SettingsController,
+		private readonly inputController: InputController,
+	) { super() }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	onStart() {
@@ -60,6 +63,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 		if (!this.settingsController.CurrentSettings) return
 		if (this.instance.GetAttribute("reloading")) {
 			this.instance.HumanoidRootPart.Anchored = true
+			Dependency<Components>().removeComponent<CharacterClient>(this.instance)
 			return
 		}
 

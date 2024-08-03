@@ -10,6 +10,7 @@ import { character } from "types/Instances/character";
 import GetWCS_Character from "shared/Util/GetWSC_Character";
 import { Components } from "@flamework/components";
 import CharacterServer from "server/Components/CharacterServer";
+import LoadCharacter from "shared/Util/LoadCharacter";
 
 const log = new Logger("PlayerService").Logger
 
@@ -38,7 +39,7 @@ export class PlayerDataHandler implements OnStart {
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private playerAdded(player: Player) {
 		player.CharacterAdded.Connect((character) => {
-			character.AddTag(`character`)
+			LoadCharacter(player).andThen(() => character.AddTag(`character`))
 		})
 
 		const player_profile = this.dataService.loadPlayerData(player as plr) as PlayerProfile

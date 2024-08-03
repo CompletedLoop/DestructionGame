@@ -5,6 +5,7 @@ import TimedConnection from "shared/Modules/TimedConnection";
 import { Players, ReplicatedStorage, RunService, StarterGui, Workspace } from "@rbxts/services";
 import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "client/network";
+import { Constants } from "shared/Constants";
 
 const log = new Logger("TopbarController").Logger
 
@@ -30,6 +31,9 @@ export class TopbarController implements OnStart {
 
         // Movesets Selection Icon
         this.loadMovesetSelectionList()
+
+        // Game Version Icon
+        new Icon().setLabel(`Version: ${Constants.VERSION}`).lock().align("Right")
         
         // Settings icon
         new Icon().setImage("13612120903").oneClick(true).selected.Connect(this.SettingsController.toggleSettingsPanel)
@@ -37,7 +41,7 @@ export class TopbarController implements OnStart {
         // Instantiate debug Icons
         this.FPS_Icon = new Icon().setEnabled(false).lock()
         this.Ping_Icon = new Icon().setEnabled(false).lock()
-        this.Region_Icon = new Icon().setEnabled(false).setLabel((Workspace.GetAttribute("Region") as string) || "unavailabe").lock()
+        this.Region_Icon = new Icon().setEnabled(false).setLabel((Workspace.GetAttribute("Region") as string) || "unavailabe").lock().align("Right")
 
         new TimedConnection(RunService.RenderStepped, this.updateDebugIcons, .2)
     }

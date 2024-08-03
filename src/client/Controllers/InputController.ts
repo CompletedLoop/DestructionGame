@@ -1,5 +1,11 @@
-import { Controller, OnInit } from "@flamework/core";
-import { UserInputService } from "@rbxts/services";
+import { Components } from "@flamework/components";
+import { Controller, Dependency, OnInit } from "@flamework/core";
+import { Players, UserInputService } from "@rbxts/services";
+import CharacterClient from "client/Components/CharacterClient";
+import { Events } from "client/network";
+import { plr } from "types/Instances/plr";
+
+const player = Players.LocalPlayer as plr
 
 @Controller({})
 export default class InputController implements OnInit {
@@ -11,6 +17,11 @@ export default class InputController implements OnInit {
 		// Connect
 		UserInputService.InputBegan.Connect(this.inputBegan)	
 		UserInputService.InputEnded.Connect(this.inputEnded)
+
+		// Add Character Component
+		Events.AddCharacterComponent.connect(() => {
+			Dependency<Components>().addComponent<CharacterClient>(player.Character)
+		})
 	}
 
 	private inputBegan(input: InputObject, GameProcessed: boolean) {

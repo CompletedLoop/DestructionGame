@@ -119,11 +119,6 @@ export default class SettingsController implements OnStart {
                 })
             } Iris.End()
 
-            // Credits
-            Iris.Separator()
-
-            Iris.Text(["Power by Roblox-ts"])
-            Iris.Text(["WCS & RefX"])
         } Iris.End()
     }
     
