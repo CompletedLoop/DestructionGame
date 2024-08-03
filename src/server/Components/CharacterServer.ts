@@ -8,7 +8,7 @@ import { Base } from "shared/Movesets/Base";
 
 import Attacking from "shared/StatusEffects/Attacking";
 import { plr } from "types/Instances/plr";
-import { LoadCharacter } from "shared/Util/LoadCharacter";
+import LoadCharacter from "shared/Util/LoadCharacter";
 
 interface CharacterAttributes {
 	SpeedMultiplier: number
@@ -25,7 +25,7 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 	declare public AttackingSE: Attacking
 
 	onStart() {
-		LoadCharacter(Players.GetPlayerFromCharacter(this.instance) as plr).andThen((character: character) => this.Initialize())
+		LoadCharacter(Players.GetPlayerFromCharacter(this.instance) as plr).andThen(this.Initialize)
 	}
 
 	private Initialize() {

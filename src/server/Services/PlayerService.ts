@@ -18,9 +18,9 @@ export class PlayerDataHandler implements OnStart {
 	constructor(private readonly dataService: DataService) {}
 
 	onStart() {
-		task.spawn(() => Players.GetPlayers().forEach((player: Player) => this.playerAdded(player as plr)))
-		Players.PlayerAdded.Connect((player) => this.playerAdded(player as plr))
-		Players.PlayerRemoving.Connect((player) => this.playerLeaving(player as plr))
+		task.spawn(() => Players.GetPlayers().forEach(this.playerAdded))
+		Players.PlayerAdded.Connect(this.playerAdded)
+		Players.PlayerRemoving.Connect(this.playerLeaving)
 
 		// Allow players to load and save their settings
 		Functions.GetLoadedPlayerSettings.setCallback((player: Player) => {
@@ -31,24 +31,24 @@ export class PlayerDataHandler implements OnStart {
 			this.dataService.setProfileData(player, "PlayerSettings", PlayerSettings)
 		})
 
-		Events.ReplicateCharacterTilt.connect((player: Player, JointC0: CFrame) => this.replicateCharacterTilt(player, JointC0))
-		Events.ChangeMoveset.connect((player: Player, Moveset: string) => this.onMovesetChangeRequest(player, Moveset))
+		Events.ReplicateCharacterTilt.connect(this.replicateCharacterTilt)
+		Events.ChangeMoveset.connect(this.onMovesetChangeRequest)
     }
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	private playerAdded(player: plr) {
+	private playerAdded(player: Player) {
 		player.CharacterAdded.Connect((character) => {
 			character.AddTag(`character`)
 		})
 
-		const player_profile = this.dataService.loadPlayerData(player) as PlayerProfile
-		this.generateLeaderstatsForPlayer(player, player_profile)
+		const player_profile = this.dataService.loadPlayerData(player as plr) as PlayerProfile
+		this.generateLeaderstatsForPlayer(player as plr, player_profile)
 		
 		player.SetAttribute("LastMovesetChange", 0)
 	}
 
-    private playerLeaving(player: plr) {
-		this.dataService.releasePlayerProfile(player)
+    private playerLeaving(player: Player) {
+		this.dataService.releasePlayerProfile(player as plr)
     }
 
 	private generateLeaderstatsForPlayer(player: plr, player_profile: PlayerProfile) {

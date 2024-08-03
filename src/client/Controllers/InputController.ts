@@ -9,8 +9,8 @@ export default class InputController implements OnInit {
 	private LastWTap = tick()
 	onInit(): void | Promise<void> {
 		// Connect
-		UserInputService.InputBegan.Connect((input: InputObject, GameProcessed: boolean) => this.inputBegan(input, GameProcessed))	
-		UserInputService.InputEnded.Connect((input: InputObject, GameProcessed: boolean) => this.inputEnded(input, GameProcessed))
+		UserInputService.InputBegan.Connect(this.inputBegan)	
+		UserInputService.InputEnded.Connect(this.inputEnded)
 	}
 
 	private inputBegan(input: InputObject, GameProcessed: boolean) {

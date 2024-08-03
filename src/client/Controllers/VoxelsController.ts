@@ -18,9 +18,9 @@ const log = new Logger("VoxelsController").Logger
 @Controller({})
 export default class VoxelsController implements OnStart {
 	onStart() {
-		Events.Voxels.HandleVoxels.connect((...args) => this.handleVoxels(...args))
-		Events.Voxels.ClearVoxels.connect(() => Workspace.FX.Voxels.ClearAllChildren())
-		new TimedConnection(RunService.Stepped, () => this.anchorDormantVoxels(), 1)
+		Events.Voxels.HandleVoxels.connect(this.handleVoxels)
+		Events.Voxels.ClearVoxels.connect(Workspace.FX.Voxels.ClearAllChildren)
+		new TimedConnection(RunService.Stepped, this.anchorDormantVoxels, 1)
 	}
 
 	handleVoxels(voxel_packet: VoxelInfoPacket) {

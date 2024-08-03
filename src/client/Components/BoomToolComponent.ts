@@ -12,9 +12,9 @@ export default class BoomToolComponent extends BaseComponent<{}, BoomTool> imple
 	inputGui!: ScreenGui & { input: TextBox & { UICorner: UICorner; }; };
 
 	onStart() {
-		this.instance.Activated.Connect(() => this.activated())
-		this.instance.Equipped.Connect(() => this.equipped())
-		this.instance.Unequipped.Connect(() => this.unequipped())
+		this.instance.Activated.Connect(this.activated)
+		this.instance.Equipped.Connect(this.equipped)
+		this.instance.Unequipped.Connect(this.unequipped)
 		this.inputGui = this.instance.RadiusGui
 	}
 	

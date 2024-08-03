@@ -55,7 +55,7 @@ export default class m1 extends Skill {
 		// Create and Connect Hitbox
         this.HitboxPart = Make("Part", { Transparency: .8, BrickColor: BrickColor.Red(), Size: new Vector3(3, 6, 4) })
         this.HitboxClass = new Hitbox([this.HitboxPart])
-        this.HitboxClass.PlayerEntered.Connect((...args) => this.OnHitboxHit(...args))
+        this.HitboxClass.PlayerEntered.Connect(this.OnHitboxHit)
 	}
 
 	public OnStartServer(): void {
@@ -126,7 +126,7 @@ export default class m1 extends Skill {
 			this.m1_anims[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
 
 			// Trigger event to server to fire hitbox
-			anim.GetMarkerReachedSignal("Hitbox").Connect(() => this.Hitbox())
+			anim.GetMarkerReachedSignal("Hitbox").Connect(this.Hitbox)
 		})
 	}
 

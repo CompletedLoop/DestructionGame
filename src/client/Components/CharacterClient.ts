@@ -7,6 +7,9 @@ import { Character, UnknownSkill } from "@rbxts/wcs";
 import { plr } from "types/Instances/plr";
 import SettingsController from "client/Controllers/UIControllers/SettingsController";
 import InputController from "client/Controllers/InputController";
+import { Events } from "client/network";
+import LoadCharacter from "shared/Util/LoadCharacter";
+import TimedConnection from "shared/Modules/TimedConnection";
 
 // Skills
 import m1 from "shared/Skills/Base/m1";
@@ -15,9 +18,6 @@ import m1 from "shared/Skills/Base/m1";
 import Attacking from "shared/StatusEffects/Attacking";
 import Running from "shared/StatusEffects/Running";
 import Signal from "@rbxts/goodsignal";
-import TimedConnection from "shared/Modules/TimedConnection";
-import { Events } from "client/network";
-import { LoadCharacter } from "shared/Util/LoadCharacter";
 
 const player = Players.LocalPlayer as plr
 
@@ -31,22 +31,19 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	private ReplicateTiltSignal = new Signal<(JointC0: CFrame) => void>()
 
-	private CharacterInitialized = false
-
 	constructor(private readonly settingsController: SettingsController, private readonly inputController: InputController) { super() }
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	onStart() {
-		LoadCharacter(player).andThen((character: character) => this.Initialize())
+		LoadCharacter(player).andThen(this.Initialize)
 	}
 
 	private Initialize() {
-		new TimedConnection(this.ReplicateTiltSignal, (JointC0: CFrame) => Events.ReplicateCharacterTilt(JointC0), .1)
-		
+		// Get WSC Character first
 		this.WCS_Character = GetWCS_Character(this.instance) as Character
+		
 		this.RunningSE = new Running(this.WCS_Character)
-
-		this.CharacterInitialized = true
+		new TimedConnection(this.ReplicateTiltSignal, (JointC0: CFrame) => Events.ReplicateCharacterTilt(JointC0), .1)
 
 		this.WCS_Character.GetSkillFromConstructor(m1)?.Started.Connect(() => {
 			this.RunningSE.RunningAnimation.TimePosition = .59
@@ -58,10 +55,13 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 	}
 
 	onTick(delta: number) {
-		if (!this.CharacterInitialized) return
-		if (!this.settingsController.CurrentSettings) return
 		if (!this.WCS_Character) return
+		if (!this.settingsController.CurrentSettings) return
 
+		/*
+		* Instead of connecting to an signal for when the play left-clicks, we check if the player is clicking
+		* every tick to allow the player to just hold down the mouse and m1 combo which other bg games do.
+		*/
 		if (UserInputService.IsMouseButtonPressed(Enum.UserInputType.MouseButton1)) {
 			if (!this.inputController.isTyping) {
 				if (!this.instance.FindFirstChildOfClass("Tool")) {

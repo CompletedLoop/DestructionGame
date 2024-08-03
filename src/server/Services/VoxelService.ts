@@ -28,6 +28,6 @@ export default class VoxelService {
 		Events.Voxels.HandleVoxels.broadcast(voxel_packet)
 	
 		// Destroy all voxels since the client will handle them
-		voxel_packet.voxels.forEach((voxel: Part) => {voxel.Destroy()})
+		voxel_packet.voxels.forEach((voxel: Part) => voxel.Destroy())
 	}
 }

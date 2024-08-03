@@ -29,6 +29,9 @@
 		"experimentalDecorators": true,
 		"plugins": [
 			{
+				"transform": "rbxts-transformer-access",
+			},
+			{
 				"transform": "rbxts-transformer-flamework",
 				"obfuscation": false
 			}

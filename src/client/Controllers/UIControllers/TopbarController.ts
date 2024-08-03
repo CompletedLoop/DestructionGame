@@ -33,14 +33,14 @@ export class TopbarController implements OnStart {
         this.loadMovesetSelectionList()
 
         // Settings icon
-        new Icon().setImage("13612120903").oneClick(true).selected.Connect(() => this.SettingsController.toggleSettingsPanel())
+        new Icon().setImage("13612120903").oneClick(true).selected.Connect(this.SettingsController.toggleSettingsPanel)
 
         // Instantiate debug Icons
         this.FPS_Icon = new Icon().setEnabled(false).lock()
         this.Ping_Icon = new Icon().setEnabled(false).lock()
         this.Region_Icon = new Icon().setEnabled(false).setLabel((Workspace.GetAttribute("Region") as string) || "unavailabe").lock()
 
-        new TimedConnection(RunService.RenderStepped, (dt: number) => this.updateDebugIcons(dt), .2)
+        new TimedConnection(RunService.RenderStepped, this.updateDebugIcons, .2)
     }
 
     private updateDebugIcons(dt: number) {
@@ -55,7 +55,7 @@ export class TopbarController implements OnStart {
 
         this.Ping_Icon.setLabel(`${tostring(ping)}ms`)
 
-        this.Region_Icon.setLabel((Workspace.GetAttribute("Region") as string) || "unavailabe")
+        this.Region_Icon.setLabel((Workspace.GetAttribute("Region") as string) || "( ͡° ͜ʖ ͡°)")
     }
 
     private async loadMovesetSelectionList() {

@@ -27,7 +27,7 @@
 		".prettierrc": true,
 		"flamework.build": true,
 		"README.md": true,
-		"tsconfig.json": true,
+		"tsconfig.json": false,
 		"package-lock.json": true,
 		".eslintrc": true,
 		"aftman.toml": true,

@@ -20,6 +20,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-roblox-ts": "^0.0.30",
     "prettier": "^2.3.2",
+    "rbxts-transformer-access": "^1.1.2",
     "rbxts-transformer-flamework": "^1.2.3",
     "roblox-ts": "^2.3.0-dev-26ec859",
     "typescript": "^5.5.3"
