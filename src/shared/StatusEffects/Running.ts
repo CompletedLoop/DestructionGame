@@ -8,6 +8,7 @@ export default class Running extends StatusEffect {
 	public readonly DestroyOnEnd = false
 
 	declare public RunningAnimation: AnimationTrack;
+
 	protected OnConstructClient(): void {
 		RunService.Stepped.Wait() // Roblox goofiness
 		RunService.Stepped.Wait()

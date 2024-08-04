@@ -75,6 +75,7 @@ export class PlayerDataHandler implements OnStart {
 	 */
 	public reloadPlayerCharacter(player: Player | plr) {
 		if (!player.Character) return
+		player.Character?.SetAttribute("reloading", true)
 
 		// Destroy the wsc character
 		GetWCS_Character(player.Character as character)?.Destroy()
@@ -100,7 +101,6 @@ export class PlayerDataHandler implements OnStart {
 		}
 
 		player.SetAttribute("LastMovesetChange", tick())
-		player.Character?.SetAttribute("reloading", true)
 		
 		const profile = this.dataService.getProfileData(player)
 		profile.CurrentMoveset = Moveset

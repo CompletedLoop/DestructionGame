@@ -58,12 +58,16 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 	}
 
 	onTick(delta: number) {
+		// Checks
 		if (!this.WCS_Character) return
 		if (!this.RunningSE) return
 		if (!this.settingsController.CurrentSettings) return
-		if (this.instance.GetAttribute("reloading")) {
-			this.instance.HumanoidRootPart.Anchored = true
+
+		// Check if we need to destroy this character component and clean it up
+		if (this.instance.GetAttribute("reloading") || this.instance.Parent !== Workspace.Characters) {
 			Dependency<Components>().removeComponent<CharacterClient>(this.instance)
+			if (this.instance.FindFirstChild("HumanoidRootpart"))
+				this.instance.HumanoidRootPart.Anchored = true
 			return
 		}
 
@@ -93,7 +97,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 					if (this.instance.Humanoid.FloorMaterial === Enum.Material.Air) {
 						this.RunningSE.RunningAnimation.AdjustSpeed(.2)
 					} else {
-						this.RunningSE.RunningAnimation.AdjustSpeed(1.1)
+						this.RunningSE.RunningAnimation.AdjustSpeed(1.1 * (this.instance.GetAttribute("SpeedMultiplier") as number))
 					}
 				}
 
