@@ -30,8 +30,8 @@ export default class SettingsController implements OnStart {
 
     private WindowState = Iris.State(false);
 
+    /** Either set or toggle the settings panel. */
     public toggleSettingsPanel(value?: boolean) {
-        log("Panel Toggled")
         this.WindowState.set(value || (!this.WindowState.get()))
     }
 
@@ -73,6 +73,23 @@ export default class SettingsController implements OnStart {
                     Workspace.GameConfig.SetAttribute("DestructionFX", value)
                     this.updateSetting("DestructionFX", value)
                 })
+
+                Iris.Tree(["Stats"], {isUncollapsed: true}); {
+                    Iris.Checkbox(["Show FPS"], {isChecked: this.CurrentSettings.FPS}).state.isChecked.onChange((value: boolean) => {
+                        this.topbarController.FPS_Icon.setEnabled(value)
+                        this.updateSetting("FPS", value)
+                    })
+                    
+                    Iris.Checkbox(["Show Ping"], {isChecked: this.CurrentSettings.PING}).state.isChecked.onChange((value: boolean) => {
+                        this.TopbarController.Ping_Icon.setEnabled(value)
+                        this.updateSetting("PING", value)
+                    })
+                    
+                    Iris.Checkbox(["Show Region"], {isChecked: this.CurrentSettings.REG}).state.isChecked.onChange((value: boolean) => {
+                        this.TopbarController.Region_Icon.setEnabled(value)
+                        this.updateSetting("REG", value)
+                    })
+                } Iris.End()
             } Iris.End()
             
             Iris.Separator()
@@ -102,21 +119,6 @@ export default class SettingsController implements OnStart {
 
             // Debug
             Iris.Tree(["Debug"], {isUncollapsed: true}); {
-                
-                Iris.Checkbox(["Show FPS"], {isChecked: this.CurrentSettings.FPS}).state.isChecked.onChange((value: boolean) => {
-                    this.topbarController.FPS_Icon.setEnabled(value)
-                    this.updateSetting("FPS", value)
-                })
-                
-                Iris.Checkbox(["Show Ping"], {isChecked: this.CurrentSettings.PING}).state.isChecked.onChange((value: boolean) => {
-                    this.TopbarController.Ping_Icon.setEnabled(value)
-                    this.updateSetting("PING", value)
-                })
-                
-                Iris.Checkbox(["Show Region"], {isChecked: this.CurrentSettings.REG}).state.isChecked.onChange((value: boolean) => {
-                    this.TopbarController.Region_Icon.setEnabled(value)
-                    this.updateSetting("REG", value)
-                })
             } Iris.End()
 
         } Iris.End()
