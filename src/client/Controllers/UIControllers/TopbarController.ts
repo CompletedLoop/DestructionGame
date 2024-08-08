@@ -64,8 +64,6 @@ export class TopbarController implements OnStart {
 
     private MovesetSelectionIcon = new Icon().setLabel("Movesets")
     private loadMovesetSelectionList() {
-        // const MovesetSelectionIcon = new Icon().setLabel("Movesets")
-
         /*
         *   Logic so that the selection doesnt get hidden by the chat
         *   and toggles the chat based if it was enabled or not

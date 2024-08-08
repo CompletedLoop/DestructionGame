@@ -1,16 +1,19 @@
-import { ReplicatedStorage, RunService } from "services";
+import { ReplicatedStorage, RunService, Workspace } from "services";
 import { AnyStatus, Message, Skill, SkillDecorator, StatusEffect } from "@rbxts/wcs";
 import { Components } from "@flamework/components";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
 import { Dependency } from "@flamework/core"
 
+// Status Effects
 import Attacking from "shared/StatusEffects/Attacking";
 import Blocking from "shared/StatusEffects/Blocking";
 import Stun from "shared/StatusEffects/Stun";
 import Ragdolled from "shared/StatusEffects/Ragdolled";
 
 import { character } from "types/Instances/character";
+import { Constants } from "shared/Constants";
 
+// Modules
 import { Logger } from "shared/Modules/Logger";
 import { Make } from "@rbxts/altmake";
 import SoundPlayer from "shared/Modules/SoundPlayer";
@@ -28,7 +31,7 @@ const m1_sound_folder = ReplicatedStorage.Sounds.Base.M1
 @SkillDecorator
 export default class m1 extends Skill {
     // Skill config
-	declare protected CheckedByOthers: false
+	declare protected static readonly CheckedByOthers: false
 	protected MutualExclusives: Constructor<AnyStatus>[] = [
 		Stun, Blocking, Ragdolled, Attacking
 	]
@@ -53,7 +56,7 @@ export default class m1 extends Skill {
 		this.AttackingSE = Dependency<Components>().getComponent<CharacterServer>(this.Character.Instance)?.AttackingSE as Attacking
 
 		// Create and Connect Hitbox
-        this.HitboxPart = Make("Part", { Transparency: .8, BrickColor: BrickColor.Red(), Size: new Vector3(3, 6, 4) })
+        this.HitboxPart = Make("Part", { Transparency: .5, BrickColor: BrickColor.Blue(), Size: new Vector3(4, 6, 3.5), Anchored: true })
         this.HitboxClass = new Hitbox([this.HitboxPart])
         this.HitboxClass.PlayerEntered.Connect(this.OnHitboxHit)
 	}
@@ -96,12 +99,19 @@ export default class m1 extends Skill {
 	protected Hitbox() {
 		// Calculate Hitbox Coordinate Frame
 		let HumanoindRootCFrame = this.HumanoidRoot.CFrame
-		let TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(4)).add(new Vector3(0, 1, 0))
+		let TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(4))//.sub(new Vector3(0, 1, 0))
 		let HitboxCFrame = CFrame.lookAlong(TargetPosition, HumanoindRootCFrame.LookVector)
 
 		// Trigger Hitbox
         this.HitboxPart.CFrame = HitboxCFrame
-        this.HitboxClass.Enable(.2)
+		this.HitboxPart.Orientation = this.HitboxPart.Orientation.mul(new Vector3(1, 1, 0))  
+        this.HitboxClass.Enable(Constants.HITBOX_LIFETIME)
+
+		// Show Htibox
+		if (Workspace.GameConfig.GetAttribute("Show_Hitboxes")) {
+			this.HitboxPart.Parent = Workspace
+			task.delay(Constants.HITBOX_LIFETIME, () => this.HitboxPart.Parent = undefined)
+		}
 
         // If the last m1 in combo then trigger voxel hitbox
 		if (this.Combo === m1_anims.GetChildren().size()) {

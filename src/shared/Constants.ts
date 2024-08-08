@@ -2,6 +2,8 @@ export const Constants = {
 	// Game
 	VERSION: "0.0.2",
 
+	HITBOX_LIFETIME: .2,
+
 	// Character
 	RUN_SPEED: 22,
 

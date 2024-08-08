@@ -9,6 +9,7 @@ import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 
 const log = new Logger("DataService").Logger
 
+// Default Template
 const PlayerSetttingsDefaults: PlayerSettings = {
 	AutoRun: false,
 
@@ -34,6 +35,7 @@ export const ProfileTemplateDefaults = {
 	PlayerSettings: PlayerSetttingsDefaults
 }
 
+// Types
 export type ProfileTemplate = typeof ProfileTemplateDefaults
 export type PlayerProfile = Profile<ProfileTemplate>
 
