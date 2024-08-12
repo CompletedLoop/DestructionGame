@@ -6,14 +6,14 @@ import { ReplicatedStorage, TweenService, Workspace } from "@rbxts/services";
 import SoundPlayer from "shared/Modules/SoundPlayer";
 import { character } from "types/Instances/character";
 
-const StartTransparency = 0
+const StartTransparency = 0.5
 
 // Create Cache
 type PartTemplate = Part & { WeldConstraint: WeldConstraint }
 const Cache = new PartCacheModule(Make("Part", {
 	Size: new Vector3(1, 2, 1),
 	BrickColor: BrickColor.White(),
-	Material: Enum.Material.ForceField,
+	Material: Enum.Material.SmoothPlastic,
 	Transparency: StartTransparency,
 	CanCollide: false,
 	Massless: true,
@@ -65,8 +65,8 @@ export default class Punched extends BaseEffect<[character]> {
 	}
 
 	private flashBodyPart(Part: Part) {
-		const fadout = TweenService.Create(Part, new TweenInfo(.1, Enum.EasingStyle.Quad), {Transparency: 1})
-		Promise.delay(.1).andThen(fadout.Play)
+		const fadout = TweenService.Create(Part, new TweenInfo(.08, Enum.EasingStyle.Quad), {Transparency: 1})
+		task.delay(.05, fadout.Play)
 	}
 
 	protected OnDestroy(): void {

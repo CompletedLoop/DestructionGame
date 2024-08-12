@@ -100,19 +100,15 @@ export default class m1 extends Skill {
 		this.Combo = this.Combo + 1 > m1_animations_folder.GetChildren().size()? 1 : this.Combo + 1
 	}
 	
-	private calculateHitboxCFrame() {
-		let HumanoindRootCFrame = this.HumanoidRoot.CFrame
-		let TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(4))//.sub(new Vector3(0, 1, 0))
-		return CFrame.lookAlong(TargetPosition, HumanoindRootCFrame.LookVector)
-	}
-	
 	@Message({Type: "Event", Destination: "Server"})
-	protected Hitbox() {
+	protected Hitbox(at: CFrame) {
 		// Calculate Hitbox CFrame
-		const HitboxCFrame = this.calculateHitboxCFrame()
+		// const HitboxCFrame = this.calculateHitboxCFrame()
+		
+		// Check provided cframe
 		
 		// Trigger Hitbox
-        this.HitboxPart.CFrame = HitboxCFrame
+        this.HitboxPart.CFrame = at
 		this.HitboxPart.Orientation = this.HitboxPart.Orientation.mul(new Vector3(1, 1, 0))
         this.HitboxClass.Enable(Constants.HITBOX_LIFETIME)
 		
@@ -124,7 +120,7 @@ export default class m1 extends Skill {
 		
         // If the last m1 in combo then trigger voxel hitbox
 		if (this.Combo === m1_animations_folder.GetChildren().size()) {
-			let voxel_packet = this.VoxelService.VoxelizeInRadius(5, HitboxCFrame, 2)
+			let voxel_packet = this.VoxelService.VoxelizeInRadius(5, at, 2)
 			voxel_packet.velocity = this.HumanoidRoot.CFrame.LookVector.mul(20)
 			this.VoxelService.PassVoxelsToClients(voxel_packet)
 		}
@@ -139,27 +135,27 @@ export default class m1 extends Skill {
 	
 	private registerHit(On: character, BodyPart: Part) {
 		log(`Hit ${On}`)
-
+		
 		// Play Hit Sound
 		SoundPlayer.PlaySoundAtPositionFromSound(
 			m1_sound_folder.Hit,
 			On.GetPivot().Position
 		)
-
+		
 		// Get WSC Character
 		Promise.promisify(GetWCS_Character)(On)
-			.andThen((WCS_Character: Character | undefined) => {
-				if (WCS_Character) {
-					// Create Punch Effect
-					new Punched(WCS_Character.Instance as character).Start(Players.GetPlayers())
-
-					// Apply Punched Status Effect
-
-					// Deal Damage
-					WCS_Character.Humanoid.TakeDamage(2.5)
-					// WCS_Character.TakeDamage({Damage: 2.5, Source: })
-				}
-			})
+		.andThen((WCS_Character: Character | undefined) => {
+			if (WCS_Character) {
+				// Create Punch Effect
+				new Punched(WCS_Character.Instance as character).Start(Players.GetPlayers())
+				
+				// Apply Punched Status Effect
+				
+				// Deal Damage
+				WCS_Character.Humanoid.TakeDamage(3.5)
+				// WCS_Character.TakeDamage({Damage: 2.5, Source: })
+			}
+		})
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -174,12 +170,21 @@ export default class m1 extends Skill {
 			let anim = animator.LoadAnimation(m1 as Animation)
 			anim.Priority = Enum.AnimationPriority.Action3
 			this.m1_animations[tonumber(m1.Name.sub(2, 2)) as number - 1] = anim
-
+			
 			// Trigger event to server to fire hitbox
-			anim.GetMarkerReachedSignal("Hitbox").Connect(this.Hitbox)
+			anim.GetMarkerReachedSignal("Hitbox").Connect(
+				() => this.Hitbox(this.calculateHitboxCFrame())
+			)
 		})
 	}
 
+	private calculateHitboxCFrame() {
+		const HumanoindRootCFrame = this.HumanoidRoot.CFrame
+		const TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(3))//.sub(new Vector3(0, 1, 0))
+		const finalCFrame = CFrame.lookAlong(TargetPosition, HumanoindRootCFrame.LookVector) 
+		return finalCFrame
+	}
+	
 	@Message({Type: "Event", Destination: "Client"})
 	protected StartClient(combo: number) {
 		log(`${combo}`, {Tag: "$combo: "})

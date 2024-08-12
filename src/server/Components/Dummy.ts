@@ -21,6 +21,7 @@ export default class Dummy extends CharacterServer implements OnStart {
 	}
 
 	public CleanupDummy() {
+		this.instance.Destroy()
 		this.destroy()
 	}
 }
