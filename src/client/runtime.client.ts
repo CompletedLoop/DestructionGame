@@ -3,18 +3,22 @@ import { Flamework } from "@flamework/core";
 import { SetGlobalHook } from "shared/Modules/Logger";
 import { CreateClient } from "@rbxts/wcs";
 import { CmdrClient } from "@rbxts/cmdr";
-import Iris from "@rbxts/iris";
 import { GlobalEvents, GlobalFunctions } from "shared/network";
 import { Events } from "./network";
+import Iris from "@rbxts/iris";
+import { Register, Start } from "@rbxts/refx";
 
 RunService.Stepped.Wait()
 
-// WCS
+// WCS & REFX
 const Client = CreateClient();
 Client.RegisterDirectory(ReplicatedStorage.TS.Movesets);
 Client.RegisterDirectory(ReplicatedStorage.TS.Skills);
 Client.RegisterDirectory(ReplicatedStorage.TS.StatusEffects);
 Client.Start()
+
+Register(ReplicatedStorage.TS.VFX)
+Start()
 
 // IRIS
 Iris.Init()

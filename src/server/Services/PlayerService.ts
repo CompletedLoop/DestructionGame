@@ -7,15 +7,16 @@ import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "server/network";
 import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 import { character } from "types/Instances/character";
-import GetWCS_Character from "shared/Util/GetWSC_Character";
 import { Components } from "@flamework/components";
+
+import GetWCS_Character from "shared/Util/GetWSC_Character";
 import CharacterServer from "server/Components/CharacterServer";
 import LoadCharacter from "shared/Util/LoadCharacter";
 
 const log = new Logger("PlayerService").Logger
 
 @Service({})
-export class PlayerDataHandler implements OnStart {
+export class PlayerService implements OnStart {
 	constructor(private readonly dataService: DataService) {}
 
 	onStart() {

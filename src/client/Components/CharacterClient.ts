@@ -38,14 +38,17 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
 	onStart() {
+		// Load the current character then initialize
 		LoadCharacter(player).andThen(this.Initialize)
 	}
 
 	private Initialize() {
-		// Get WSC Character first
-		this.WCS_Character = GetWCS_Character(this.instance) as Character
-		
+		// Get WSC Character
+		this.WCS_Character = GetWCS_Character(player.Character) as Character
+
+		// Create running status
 		this.RunningSE = new Running(this.WCS_Character)
+
 		new TimedConnection(this.ReplicateTiltSignal, (JointC0: CFrame) => Events.ReplicateCharacterTilt(JointC0), .1)
 
 		this.WCS_Character.GetSkillFromConstructor(m1)?.Started.Connect(() => {
@@ -72,7 +75,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 		}
 
 		/*
-		*	Instead of connecting to an signal for when the play left-clicks, we check if the player is clicking
+		*	Instead of connecting to a signal for when the play left-clicks, we check if the player is clicking
 		*	every tick to allow the player to just hold down the mouse and m1 combo which other bg games do.
 		*/
 		if (UserInputService.IsMouseButtonPressed(Enum.UserInputType.MouseButton1)) {
@@ -84,7 +87,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 		}
 		
 		/*
-		*	Check on every frame if the player should be running and change the state of the character based on checks
+		*	Check on every tick if the player should be running and change the state of the character based on checks
 		*/
 		const running_state = this.RunningSE.GetState()
 		if (this.WCS_Character.Humanoid.MoveDirection.Dot(Workspace.Camera.CFrame.LookVector.mul(new Vector3(1, 0, 1)).Unit) > .45) {
@@ -116,10 +119,14 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 *	This is all responsible for the movement tilting
+	 */
 	target_tilt = 8.5
 	joint_motor = this.instance.HumanoidRootPart.RootJoint;
 	original_C0 = this.joint_motor.C0;
 	onRender(delta: number) {
+		if (!this.instance.Parent) return;
 		let xdir = this.instance.Humanoid.MoveDirection.Dot(this.instance.HumanoidRootPart.CFrame.LookVector)
 		let zdir = -this.instance.Humanoid.MoveDirection.Dot(this.instance.HumanoidRootPart.CFrame.RightVector)
 		let target = this.original_C0.mul(CFrame.Angles(math.rad(this.target_tilt * xdir),math.rad(this.target_tilt * zdir),0))

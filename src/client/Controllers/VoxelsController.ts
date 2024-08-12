@@ -77,19 +77,21 @@ export default class VoxelsController implements OnStart {
 		// log(`Processed ${voxels.size()} voxels`)
 
 		// Fade voxels out and destroy
-		task.delay(Constants.VOXEL_LIFETIME, () => {
-			if (!voxel_holder) return
-
-			voxel_packet.voxels.forEach((voxel: Part) => {
-				voxel.CollisionGroup = "Debris"
-				TweenService.Create(voxel, new TweenInfo(1), {Transparency: 1}).Play()
+		Promise.delay(Constants.VOXEL_LIFETIME)
+			.andThenCall(this.fadeOutAndDestroyVoxels, voxel_packet)
+			.andThen(() => {
+				if (!voxel_holder) return
+				Promise.delay(2).andThen(voxel_holder.Destroy)
 			})
-
-			task.wait(2)
-			voxel_holder.Destroy()
+	}
+	
+	fadeOutAndDestroyVoxels(voxel_packet: VoxelInfoPacket) {
+		voxel_packet.voxels.forEach((voxel: Part) => {
+			voxel.CollisionGroup = "Debris"
+			TweenService.Create(voxel, new TweenInfo(1), {Transparency: 1}).Play()
 		})
 	}
-
+	
 	cloneReplicatedVoxels(voxels: Part[]): Model {
 		let voxel_holder = new Instance("Model")
 		if (voxels.size() < 1) return voxel_holder
