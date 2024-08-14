@@ -64,7 +64,7 @@ export default class m1 extends Skill {
         this.HitboxPart = Make("Part", {
 			Transparency: .5,
 			BrickColor: BrickColor.Blue(),
-			Size: new Vector3(4, 6, 4.5),
+			Size: new Vector3(5, 6, 7),
 			Anchored: true,
 			CanCollide: false,
 		})
@@ -131,17 +131,16 @@ export default class m1 extends Skill {
 	}
 	
 	private registerHit(On: character, BodyPart: Part) {
-		log(`Hit ${On}`)
-		
 		// Play Hit Sound
 		SoundPlayer.PlaySoundAtPosition(
 			m1_sound_folder.Hit,
 			On.GetPivot().Position
 		)
+
+		log(`Hit ${On}`)
 		
-		// Get WSC Character
-		Promise.promisify(GetWCS_Character)(On)
-		.andThen((WCS_Character: Character | undefined) => {
+		// Get WSC Character and do the rest
+		Promise.promisify(GetWCS_Character)(On).andThen((WCS_Character: Character | undefined) => {
 			if (WCS_Character) {
 				// Create Punch Effect
 				new Punched(WCS_Character.Instance as character).Start(Players.GetPlayers())
@@ -150,7 +149,9 @@ export default class m1 extends Skill {
 				
 				// Deal Damage
 				WCS_Character.Humanoid.TakeDamage(3.5)
-				// WCS_Character.TakeDamage({Damage: 2.5, Source: })
+
+				// Push players forwards/back
+
 			}
 		})
 	}

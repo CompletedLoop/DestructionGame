@@ -1,5 +1,5 @@
 import { Workspace } from "@rbxts/services"
-import { Clone, Make } from "@rbxts/altmake"
+import { Make } from "@rbxts/altmake"
 import { PartCache } from "@rbxts/partcache/out/class"
 import PartCacheModule from "@rbxts/partcache"
 
@@ -19,13 +19,18 @@ const SoundPartCache = new PartCacheModule(Make("Part", {
 SoundPartCache.SetCacheParent(Workspace.FX.PartCache.SFX)
 
 export default class SoundPlayer {
-	public static PlaySoundAtPosition(id: string | Sound, position: Vector3) {
+	/**
+	 * Plays A Sound at a Position
+	 * @param id Either the SoundId or Sound object you want to play
+	 * @param position Where should the Sound be played at
+	 */
+	public static PlaySoundAtPosition(id: string | Sound, position: Vector3): void {
 		// Get SoundPart and Position it
 		const SoundPart = SoundPartCache.GetPart()
 		SoundPart.Position = position
 		
 		// Set SoundId and Play
-		SoundPart.Sound.SoundId = typeOf(id) === "string"? id as string : (id as Sound).SoundId
+		SoundPart.Sound.SoundId = typeIs(id, "string") ? id : id.SoundId
 		SoundPart.Sound.Play()
 
 		// Return SoundPart after Sound is finished playing

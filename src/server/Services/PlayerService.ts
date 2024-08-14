@@ -93,7 +93,6 @@ export class PlayerService implements OnStart {
 		// Verify that the player is allowed to switch movesets
 		const difference = tick() - (player.GetAttribute("LastMovesetChange") as number)
 		if (difference < 10) {
-			log("Moveset Change Denied")
 			Events.SendNotificationToPlayer(player, {
 				Text: `Please wait ${tostring(math.round(10 - difference))} seconds.`,
 				Title: "Switching too Fast!",
