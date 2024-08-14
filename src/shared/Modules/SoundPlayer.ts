@@ -1,33 +1,35 @@
+import { Workspace } from "@rbxts/services"
 import { Clone, Make } from "@rbxts/altmake"
+import { PartCache } from "@rbxts/partcache/out/class"
 import PartCacheModule from "@rbxts/partcache"
-import { ReplicatedStorage, Workspace } from "@rbxts/services"
 
-const SoundPartCache = new PartCacheModule(ReplicatedStorage.SoundPart, 150)
-SoundPartCache.SetCacheParent(Workspace.FX.SFX)
+type PartTemplate = Part & { Sound: Sound , WeldConstraint: WeldConstraint}
+const SoundPartCache = new PartCacheModule(Make("Part", {
+	Anchored: true,
+	Transparency: 1,
+	CanCollide: false,
+	BrickColor: BrickColor.Red(),
+	Massless: true,
+	Children: [
+		Make("Sound"),
+		Make("WeldConstraint")
+	]
+
+}), 150) as PartCache<PartTemplate>
+SoundPartCache.SetCacheParent(Workspace.FX.PartCache.SFX)
 
 export default class SoundPlayer {
-	public static PlaySoundAtPosition(id: string, position: Vector3) {
+	public static PlaySoundAtPosition(id: string | Sound, position: Vector3) {
+		// Get SoundPart and Position it
 		const SoundPart = SoundPartCache.GetPart()
-
 		SoundPart.Position = position
-		SoundPart.Sound.SoundId = id
+		
+		// Set SoundId and Play
+		SoundPart.Sound.SoundId = typeOf(id) === "string"? id as string : (id as Sound).SoundId
 		SoundPart.Sound.Play()
 
-		Promise.delay(SoundPart.Sound.TimeLength).andThen(() => SoundPartCache.ReturnPart(SoundPart))
-	}
-
-	public static PlaySoundAtPositionFromSound(sound: Sound, position: Vector3) {
-		const SoundPart = SoundPartCache.GetPart()
-		
-		SoundPart.Position = position
-		const cloned_sound = Clone(sound, {
-			Parent: SoundPart,
-		})
-		
-		cloned_sound.Play()
-		
-		Promise.delay(cloned_sound.TimeLength)
-			.andThen(cloned_sound.Destroy)
-			.andThen(() => SoundPartCache.ReturnPart(SoundPart))
+		// Return SoundPart after Sound is finished playing
+		Promise.fromEvent(SoundPart.Sound.Ended)
+			.andThenCall(() => SoundPartCache.ReturnPart(SoundPart))
 	}
 }

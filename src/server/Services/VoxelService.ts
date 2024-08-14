@@ -6,9 +6,6 @@ import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 import VoxBreaker from "shared/Luau/VoxBreaker"
 import PartCacheModule from "@rbxts/partcache";
 
-const SoundPartCache = new PartCacheModule(ReplicatedStorage.SoundPart, 100)
-SoundPartCache.SetCacheParent(Workspace.FX.SFX)
-
 @Service({})
 export default class VoxelService {
 	public VoxelizeInRadius(radius: number, cframe: CFrame, voxel_size: number, shape?: Enum.PartType): VoxelInfoPacket {

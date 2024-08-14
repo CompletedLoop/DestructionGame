@@ -82,7 +82,7 @@ export default class m1 extends Skill {
 		this.AttackingSE.Start()
 
 		// Play a swing sound
-		SoundPlayer.PlaySoundAtPositionFromSound(
+		SoundPlayer.PlaySoundAtPosition(
 			m1_sound_folder.Swing,
 			this.HumanoidRoot.Position
 		)
@@ -102,9 +102,6 @@ export default class m1 extends Skill {
 	
 	@Message({Type: "Event", Destination: "Server"})
 	protected Hitbox(at: CFrame) {
-		// Calculate Hitbox CFrame
-		// const HitboxCFrame = this.calculateHitboxCFrame()
-		
 		// Check provided cframe
 		
 		// Trigger Hitbox
@@ -137,7 +134,7 @@ export default class m1 extends Skill {
 		log(`Hit ${On}`)
 		
 		// Play Hit Sound
-		SoundPlayer.PlaySoundAtPositionFromSound(
+		SoundPlayer.PlaySoundAtPosition(
 			m1_sound_folder.Hit,
 			On.GetPivot().Position
 		)

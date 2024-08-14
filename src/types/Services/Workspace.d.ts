@@ -95,8 +95,9 @@ interface Workspace extends Model {
 	FX: Folder & {
 		Hitboxes: Folder;
 		Voxels: Folder;
-		SFX: Folder;
-		PartCache: Folder;
+		PartCache: Folder & {
+			SFX: Folder;
+		};
 	};
 	Characters: Folder & {
 		Dummies: Folder & {

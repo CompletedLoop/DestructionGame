@@ -66,7 +66,7 @@ export default class Punched extends BaseEffect<[character]> {
 
 	private flashBodyPart(Part: Part) {
 		const fadout = TweenService.Create(Part, new TweenInfo(.08, Enum.EasingStyle.Quad), {Transparency: 1})
-		task.delay(.05, fadout.Play)
+		task.delay(.075, fadout.Play)
 	}
 
 	protected OnDestroy(): void {
