@@ -42,7 +42,9 @@ export default class m1 extends Skill {
 	private Combo: number = 1
 	private LastM1: number = 0
 
-    private readonly HumanoidRoot: Part = (this.Character.Instance as character).HumanoidRootPart
+    private readonly HumanoidRoot: () => Part = () => (this.Character.Instance as character).HumanoidRootPart
+    private readonly Torso: () => Part = () => (this.Character.Instance as character).Torso
+
 	protected OnConstruct(): void {}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +66,7 @@ export default class m1 extends Skill {
         this.HitboxPart = Make("Part", {
 			Transparency: .5,
 			BrickColor: BrickColor.Blue(),
-			Size: new Vector3(5, 6, 7),
+			Size: new Vector3(6, 6, 7),
 			Anchored: true,
 			CanCollide: false,
 		})
@@ -84,7 +86,7 @@ export default class m1 extends Skill {
 		// Play a swing sound
 		SoundPlayer.PlaySoundAtPosition(
 			m1_sound_folder.Swing,
-			this.HumanoidRoot.Position
+			this.HumanoidRoot().Position
 		)
 
 		// Tell client that the m1 is approved and initiate the m1
@@ -118,7 +120,7 @@ export default class m1 extends Skill {
         // If the last m1 in combo then trigger voxel hitbox
 		if (this.Combo === m1_animations_folder.GetChildren().size()) {
 			let voxel_packet = this.VoxelService.VoxelizeInRadius(5, at, 2)
-			voxel_packet.velocity = this.HumanoidRoot.CFrame.LookVector.mul(20)
+			voxel_packet.velocity = this.HumanoidRoot().CFrame.LookVector.mul(20)
 			this.VoxelService.PassVoxelsToClients(voxel_packet)
 		}
 	}
@@ -126,6 +128,9 @@ export default class m1 extends Skill {
 	private OnHitboxHit(character: character, BodyPart: Part) {
 		// Checks
 		if (character === this.Character.Instance) return
+
+		const distance = character.GetPivot().Position.sub(this.HumanoidRoot().Position).Magnitude
+		if (distance > 15) return
 		
 		this.registerHit(character, BodyPart)
 	}
@@ -140,18 +145,19 @@ export default class m1 extends Skill {
 		log(`Hit ${On}`)
 		
 		// Get WSC Character and do the rest
-		Promise.promisify(GetWCS_Character)(On).andThen((WCS_Character: Character | undefined) => {
+		GetWCS_Character(On).andThen((WCS_Character: Character) => {
 			if (WCS_Character) {
 				// Create Punch Effect
 				new Punched(WCS_Character.Instance as character).Start(Players.GetPlayers())
 				
-				// Apply Punched Status Effect
-				
 				// Deal Damage
 				WCS_Character.Humanoid.TakeDamage(3.5)
+				// WCS_Character.TakeDamage({Damage: 3.5, Source: })
 
 				// Push players forwards/back
-
+				const velocity = CFrame.lookAt(this.HumanoidRoot().Position, On.GetPivot().Position).LookVector.mul(60)
+				// On.Torso.AssemblyLinearVelocity = On.Torso.AssemblyLinearVelocity.add(velocity)
+				this.HitCharacter(On, velocity)
 			}
 		})
 	}
@@ -177,7 +183,7 @@ export default class m1 extends Skill {
 	}
 
 	private calculateHitboxCFrame() {
-		const HumanoindRootCFrame = this.HumanoidRoot.CFrame
+		const HumanoindRootCFrame = this.HumanoidRoot().CFrame
 		const TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(3))//.sub(new Vector3(0, 1, 0))
 		const finalCFrame = CFrame.lookAlong(TargetPosition, HumanoindRootCFrame.LookVector) 
 		return finalCFrame
@@ -187,5 +193,10 @@ export default class m1 extends Skill {
 	protected StartClient(combo: number) {
 		log(`${combo}`, {Tag: "$combo: "})
 		this.m1_animations[combo - 1].Play()
+	}
+
+	@Message({Type: "Event", Destination: "Client"})
+	protected HitCharacter(char: character, velocity: Vector3) {
+		this.Torso().AssemblyLinearVelocity = this.Torso().AssemblyLinearVelocity.add(velocity)
 	}
 }

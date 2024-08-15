@@ -1,14 +1,22 @@
+import { Players } from "@rbxts/services";
 import { Character } from "@rbxts/wcs";
 import { character } from "types/Instances/character";
 
-export default function GetWCS_Character(character: character) {
-	assert(character, "Character is nil")
-	
-	let WSC_Character: Character | undefined = Character.GetCharacterFromInstance(character)
+/**
+ * Returns a promise containing the requested WCS Character
+ * @param character 
+ * @returns A promise for the WCS Character
+ */
+export default async function GetWCS_Character(character: character | Model) {
+	assert(character, "Parameter @character is undefined")
 
-	while ((!WSC_Character) && task.wait()) {
-		WSC_Character = Character.GetCharacterFromInstance(character)
-	}
-
-	return WSC_Character;
+	return Promise.retryWithDelay(() => new Promise<Character>(
+		(resolve, reject) => {
+			const WCS_Character = Character.GetCharacterFromInstance(character)
+			if (WCS_Character)
+				resolve(WCS_Character)
+			else
+				reject(`${character} does not have a WCS Character`)
+		}
+	), 20, .05)
 }

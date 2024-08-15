@@ -44,7 +44,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	private Initialize() {
 		// Get WSC Character
-		this.WCS_Character = GetWCS_Character(player.Character) as Character
+		this.WCS_Character = GetWCS_Character(player.Character).await()[1] as Character
 
 		// Create running status
 		this.RunningSE = new Running(this.WCS_Character)

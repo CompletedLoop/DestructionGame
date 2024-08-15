@@ -6,24 +6,17 @@ import { Players, ReplicatedStorage, RunService, StarterGui, Workspace } from "@
 import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "client/network";
 import { Constants } from "shared/Constants";
+import GetPing from "client/ClientUtil/GetPing";
 
 const log = new Logger("TopbarController").Logger
 
 @Controller({})
 export class TopbarController implements OnStart {
-    SettingsController!: SettingsController;
+    declare private SettingsController: SettingsController;
 
-    // Meant to be access by other controllers
     declare public FPS_Icon: Icon;
     declare public Ping_Icon: Icon;
     declare public Region_Icon: Icon;
-
-    // Should move this into a util module or something
-    public getPing() {
-        const now = os.clock()
-        Functions.Debug.GetPing().await()
-        return os.clock() - now
-    }
 
     onStart(): void {
         task.wait(1) // wait a sec
@@ -50,7 +43,7 @@ export class TopbarController implements OnStart {
         this.MovesetSelectionIcon.setEnabled(true)
         this.FPS_Icon.setLabel(`FPS: ${tostring(math.round(1/dt))}`)
 
-        const ping = math.round(this.getPing() * 1000)
+        const ping = math.round(GetPing() * 1000)
         const icon_label = this.Ping_Icon.getInstance("IconLabel") as TextLabel
 
         if (ping < 75) icon_label.TextColor3 = Color3.fromRGB(73, 255, 131)

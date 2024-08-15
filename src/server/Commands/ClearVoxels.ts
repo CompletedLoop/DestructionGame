@@ -1,4 +1,4 @@
-import { CommandContext, CommandDefinition } from "@rbxts/cmdr";
+import { CommandDefinition } from "@rbxts/cmdr";
 
 const ClearVoxels: CommandDefinition = {
 	Name: "ClearVoxels",

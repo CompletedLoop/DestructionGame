@@ -12,6 +12,7 @@ import { Components } from "@flamework/components";
 import GetWCS_Character from "shared/Util/GetWSC_Character";
 import CharacterServer from "server/Components/CharacterServer";
 import LoadCharacter from "shared/Util/LoadCharacter";
+import { Character } from "@rbxts/wcs";
 
 const log = new Logger("PlayerService").Logger
 
@@ -79,7 +80,7 @@ export class PlayerService implements OnStart {
 		player.Character?.SetAttribute("reloading", true)
 
 		// Destroy the wsc character
-		GetWCS_Character(player.Character as character)?.Destroy()
+		GetWCS_Character(player.Character).andThen((char: Character) => char.Destroy())
 
 		// Destroy Character
 		player.Character.Destroy()

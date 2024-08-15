@@ -79,9 +79,10 @@ export default class VoxelsController implements OnStart {
 		// Fade voxels out and destroy
 		Promise.delay(Constants.VOXEL_LIFETIME)
 			.andThenCall(this.fadeOutAndDestroyVoxels, voxel_packet)
+			.andThenCall(Promise.delay, 2)
 			.andThen(() => {
 				if (!voxel_holder) return
-				Promise.delay(2).andThen(voxel_holder.Destroy)
+				voxel_holder.Destroy()
 			})
 	}
 	

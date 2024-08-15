@@ -30,7 +30,7 @@ export class DummySpawner extends BaseComponent<{}, Part> implements OnStart {
 
 	private onDummyDeath() {
 		if (this.CurrentDummyComponent) {
-			log(`Dummy ${this.CurrentDummy} has died. Respawning new Dummy`)
+			log(`${this.CurrentDummy} has died. Respawning new Dummy`)
 			Promise.delay(5).andThen(() => {
 				this.CurrentDummyComponent?.CleanupDummy()
 				this.spawnDummy()
