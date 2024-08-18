@@ -3,7 +3,7 @@ import { Character } from "@rbxts/wcs";
 import { character } from "types/Instances/character";
 
 /**
- * Returns a promise containing the requested WCS Character
+ * Returns a promise containing the requested WCS Character.
  * @param character 
  * @returns A promise for the WCS Character
  */

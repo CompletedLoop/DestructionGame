@@ -22,12 +22,12 @@ export default class SoundPlayer {
 	/**
 	 * Plays A Sound at a Position
 	 * @param id Either the SoundId or Sound object you want to play
-	 * @param position Where should the Sound be played at
+	 * @param at Where should the Sound be played at
 	 */
-	public static PlaySoundAtPosition(id: string | Sound, position: Vector3): void {
+	public static PlaySoundAtPosition(id: string | Sound, at: Vector3): void {
 		// Get SoundPart and Position it
 		const SoundPart = SoundPartCache.GetPart()
-		SoundPart.Position = position
+		SoundPart.Position = at
 		
 		// Set SoundId and Play
 		SoundPart.Sound.SoundId = typeIs(id, "string") ? id : id.SoundId
@@ -37,4 +37,6 @@ export default class SoundPlayer {
 		Promise.fromEvent(SoundPart.Sound.Ended)
 			.andThenCall(() => SoundPartCache.ReturnPart(SoundPart))
 	}
+
+    public static PlaySoundAtPostitionFromSound(sound: Sound, position: Vector3) {}
 }

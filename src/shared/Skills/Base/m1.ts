@@ -1,4 +1,4 @@
-import { Players, ReplicatedStorage, RunService, Workspace } from "services";
+import { KeyframeSequenceProvider, Players, ReplicatedStorage, RunService, Workspace } from "services";
 import { AnyStatus, Character, Message, Skill, SkillDecorator, StatusEffect } from "@rbxts/wcs";
 import { Components } from "@flamework/components";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
@@ -22,6 +22,8 @@ import Hitbox from "shared/Luau/Hitbox";
 // Server Dependencies
 import type VoxelService from "server/Services/VoxelService";
 import type CharacterServer from "server/Components/CharacterServer";
+import type Dummy from "server/Components/Dummy";
+
 import GetWCS_Character from "shared/Util/GetWSC_Character";
 import Punched from "shared/VFX/Punched";
 
@@ -126,40 +128,55 @@ export default class m1 extends Skill {
 	}
 	
 	private OnHitboxHit(character: character, BodyPart: Part) {
-		// Checks
+		// Sanity Check
 		if (character === this.Character.Instance) return
 
+		// Prevents laggy players and expoiters from hitting too far away
 		const distance = character.GetPivot().Position.sub(this.HumanoidRoot().Position).Magnitude
 		if (distance > 15) return
 		
+		// Finally register the hit
 		this.registerHit(character, BodyPart)
 	}
 	
 	private registerHit(On: character, BodyPart: Part) {
-		// Play Hit Sound
-		SoundPlayer.PlaySoundAtPosition(
-			m1_sound_folder.Hit,
-			On.GetPivot().Position
-		)
-
-		log(`Hit ${On}`)
-		
-		// Get WSC Character and do the rest
 		GetWCS_Character(On).andThen((WCS_Character: Character) => {
 			if (WCS_Character) {
+				// Get Character Component
+				const CharacterComponent = On.IsDescendantOf(Workspace.Characters.Dummies)?
+				Dependency<Components>().getComponent<Dummy>(On) :
+				Dependency<Components>().getComponent<CharacterServer>(On)
+
+				if (!CharacterComponent) return
+
 				// Create Punch Effect
 				new Punched(WCS_Character.Instance as character).Start(Players.GetPlayers())
+				
+				// Play Hit Sound
+				SoundPlayer.PlaySoundAtPosition(
+					m1_sound_folder.Hit,
+					On.GetPivot().Position
+				)
 				
 				// Deal Damage
 				WCS_Character.Humanoid.TakeDamage(3.5)
 				// WCS_Character.TakeDamage({Damage: 3.5, Source: })
+				
+				// Push both Characters
+				const current_position = this.HumanoidRoot().Position
+				const direction = CFrame.lookAt(current_position, On.GetPivot().Position).LookVector
+				const force = 15
 
-				// Push players forwards/back
-				const velocity = CFrame.lookAt(this.HumanoidRoot().Position, On.GetPivot().Position).LookVector.mul(60)
-				// On.Torso.AssemblyLinearVelocity = On.Torso.AssemblyLinearVelocity.add(velocity)
-				this.HitCharacter(On, velocity)
+				// CharacterComponent.setNetworkOwnerForDuration(this.Player, .5)
+				
+				task.defer(() => {
+					this.CharacterComponent?.push(direction, force, .1)
+					CharacterComponent.push(direction, force, .1)
+				})
 			}
 		})
+
+		log(`Hit ${On}`)
 	}
 	
 	///////////////////////////////////////////////////////////////////////////////////////////////
@@ -196,7 +213,10 @@ export default class m1 extends Skill {
 	}
 
 	@Message({Type: "Event", Destination: "Client"})
-	protected HitCharacter(char: character, velocity: Vector3) {
-		this.Torso().AssemblyLinearVelocity = this.Torso().AssemblyLinearVelocity.add(velocity)
+	protected HitCharacter(On: character) {
+		// const lookDirection = CFrame.lookAt(this.HumanoidRoot().Position, On.GetPivot().Position).LookVector
+		// const MoveTo = this.HumanoidRoot().Position.add(lookDirection.mul(10))
+		// this.Torso().AssemblyLinearVelocity = this.Torso().AssemblyLinearVelocity.add(velocity)
+		// On.Torso.AssemblyLinearVelocity = On.Torso.AssemblyLinearVelocity.add(velocity)
 	}
 }

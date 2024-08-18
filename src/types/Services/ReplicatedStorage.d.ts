@@ -41,6 +41,7 @@ interface ReplicatedStorage extends Instance {
 			Attacking: ModuleScript;
 			Blocking: ModuleScript;
 			Stun: ModuleScript;
+			IFrame: ModuleScript;
 			Ragdolled: ModuleScript;
 			Running: ModuleScript;
 		};
@@ -61,6 +62,24 @@ interface ReplicatedStorage extends Instance {
 		};
 		VFX: Folder & {
 			Punched: ModuleScript;
+		};
+	};
+	Animations: Folder & {
+		Blocks: Folder & {
+			Block: Animation;
+		};
+		Dashes: Folder;
+		Hits: Folder & {
+			Normal: Folder & {
+				flinch1: Animation;
+			};
+			Block: Folder;
+		};
+		Movesets: Folder;
+		Run: Animation;
+		m1s: Folder & {
+			m1: Animation;
+			m2: Animation;
 		};
 	};
 	buildingObjects: Folder & {
@@ -1472,17 +1491,6 @@ interface ReplicatedStorage extends Instance {
 			};
 		};
 	};
-	Animations: Folder & {
-		Dashes: Folder;
-		Blocks: Folder & {
-			Block: Animation;
-		};
-		Run: Animation;
-		m1s: Folder & {
-			m1: Animation;
-			m2: Animation;
-		};
-	};
 	Sounds: Folder & {
 		DestructionSounds: Folder & {
 			Concrete: Folder & {
@@ -1499,9 +1507,6 @@ interface ReplicatedStorage extends Instance {
 				Swing: Sound;
 			};
 		};
-	};
-	SoundPart: Part & {
-		Sound: Sound;
 	};
 	rbxts_include: Folder & {
 		RuntimeLib: ModuleScript;

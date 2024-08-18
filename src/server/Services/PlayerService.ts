@@ -112,8 +112,7 @@ export class PlayerService implements OnStart {
 
 	private replicateCharacterTilt(player: Player, JointC0: CFrame) {
 		const character = player.Character as character
-		if (character) {
-			// TODO make another event that fires to all clients except this one so they can make them tilt on their screen
-		}
+		if (character)
+			Events.ReplicateCharacterTilt.except(player, character, JointC0)
 	}
 }

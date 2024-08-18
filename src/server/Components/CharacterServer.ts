@@ -1,4 +1,4 @@
-import { Players, RunService, Workspace } from "services";
+import { Debris, Players, RunService, Workspace } from "services";
 import { Dependency, OnStart } from "@flamework/core";
 import { Component, BaseComponent, Components } from "@flamework/components";
 
@@ -11,6 +11,7 @@ import { plr } from "types/Instances/plr";
 import LoadCharacter from "shared/Util/LoadCharacter";
 import { Events } from "server/network";
 import Punched from "shared/VFX/Punched";
+import { Make } from "@rbxts/altmake";
 
 interface CharacterAttributes {
 	SpeedMultiplier: number
@@ -28,6 +29,45 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 	declare public character: character
 
 	public player = Players.GetPlayerFromCharacter(this.instance) as plr 
+
+	public setNetworkOwner(to: Player | undefined) {
+		this.character.GetChildren().forEach((bodypart: Part | Instance) => {
+			if (classIs(bodypart, "Part"))
+				bodypart.SetNetworkOwner(to)
+		})
+	}
+
+	public setNetworkOwnerForDuration(to: Player | undefined, duration: number) {
+		// Get the current newtork owner
+		const current_network_owner = this.character.Torso.GetNetworkOwner()
+
+		// Set new Network Owner
+		this.setNetworkOwner(to)
+
+		// Asychronously wait to set back the Network Owner
+		Promise.delay(duration).andThenCall(this.setNetworkOwner, current_network_owner)
+	}
+
+	public push(direction: Vector3, force: number, duration?: number) {
+		const a0 = Make("Attachment", {
+			Axis: new Vector3(0, 0, -90), 
+			Parent: this.character.HumanoidRootPart
+		})
+
+		const LinearVelocity = Make("LinearVelocity", {
+			VelocityConstraintMode: Enum.VelocityConstraintMode.Line,
+			LineDirection: direction,
+			LineVelocity: force,
+			MaxForce: math.huge,
+
+			Attachment0: a0,
+			RelativeTo: Enum.ActuatorRelativeTo.World,
+			Parent: this.character.HumanoidRootPart
+		})
+
+		Debris.AddItem(LinearVelocity, duration || .15)
+		Debris.AddItem(a0, duration || .15)
+	}
 
 	onStart() {
 		this.character = this.instance as character
@@ -69,9 +109,9 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 	}
 
 	protected setCollisionGroupOfBodyParts() {
-		// Add all character parts to collision group
 		this.character.GetDescendants().forEach((part) => {
-			if (part.IsA("BasePart")) part.CollisionGroup = "Players"
+			if (part.IsA("BasePart"))
+				part.CollisionGroup = "Players"
 		})
 	}
 

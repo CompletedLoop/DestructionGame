@@ -44,7 +44,11 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 
 	private Initialize() {
 		// Get WSC Character
-		this.WCS_Character = GetWCS_Character(player.Character).await()[1] as Character
+		GetWCS_Character(player.Character)
+			.andThen((char: Character) => this.WCS_Character = char)
+			.catch(() => {
+				player.Kick("Something went wrong. Just rejoin.")
+			})
 
 		// Create running status
 		this.RunningSE = new Running(this.WCS_Character)
@@ -127,6 +131,7 @@ export default class CharacterClient extends BaseComponent<{}, character> implem
 	original_C0 = this.joint_motor.C0;
 	onRender(delta: number) {
 		if (!this.instance.Parent) return;
+
 		let xdir = this.instance.Humanoid.MoveDirection.Dot(this.instance.HumanoidRootPart.CFrame.LookVector)
 		let zdir = -this.instance.Humanoid.MoveDirection.Dot(this.instance.HumanoidRootPart.CFrame.RightVector)
 		let target = this.original_C0.mul(CFrame.Angles(math.rad(this.target_tilt * xdir),math.rad(this.target_tilt * zdir),0))

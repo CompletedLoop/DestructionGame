@@ -6,6 +6,8 @@ import { character } from "types/Instances/character";
 import PartCacheModule from "@rbxts/partcache";
 import SoundPlayer from "shared/Modules/SoundPlayer";
 
+const FlinchAnimations = ReplicatedStorage.Animations.Hits.Normal.GetChildren() as Animation[]
+
 const StartTransparency = 0.5
 
 // Create Cache
@@ -33,6 +35,9 @@ export default class Punched extends BaseEffect<[character]> {
 	private currentlyUsingParts: PartTemplate[] = []
 
 	public override OnStart(char: character): void {
+		// Play Flinch Animation
+		this.playRandomFlinchAnimation(char);
+
 		// Loop through body parts and use cache to make a flash version
 		(char.GetChildren() as Part[]).forEach((BodyPart: Part) => {
 			if (BodyPart.IsA("Part")) {
@@ -43,18 +48,29 @@ export default class Punched extends BaseEffect<[character]> {
 			}
 		})
 	}
+
+	private playRandomFlinchAnimation(char: character) {
+		const animator = char.Humanoid.Animator
+
+		// Grab random flinch animation
+		const chosen_animation = FlinchAnimations[math.random(1, FlinchAnimations.size()) - 1]
+		animator.LoadAnimation(chosen_animation).Play()
+	}
 	
 	private borrowPart(BodyPart: Part) {
+		// Get Part
 		const borrowed_part = Cache.GetPart()
 	
-		// Size Part
+		// Set Size
 		borrowed_part.Size =  new Vector3(1, 2, 1) // Default limb size
 		if (BodyPart.Name === "Torso") borrowed_part.Size = new Vector3(2, 2, 1)
 		if (BodyPart.Name === "Head") borrowed_part.Size = new Vector3(2, 1, 1)
 		borrowed_part.Size = borrowed_part.Size.mul(1.05) // Make it slightly large so its visible
-	
-		// Position and set weld
+
+		// Set CFrame
 		borrowed_part.CFrame = BodyPart.CFrame
+	
+		// Setup Weld Constraint
 		borrowed_part.WeldConstraint.Part0 = BodyPart
 		borrowed_part.WeldConstraint.Part1 = borrowed_part
 

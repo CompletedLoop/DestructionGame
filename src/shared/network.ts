@@ -1,4 +1,5 @@
 import { Networking } from "@flamework/networking";
+import { character } from "types/Instances/character";
 import { PlayerSettings} from "types/Interfaces/PlayerSettings";
 import { VoxelInfoPacket } from "types/Interfaces/VoxelInfoPacket";
 
@@ -18,6 +19,8 @@ interface ServerToClientEvents {
 	SendNotificationToPlayer(NotificationInfo: SendNotificationConfig): void
 
 	AddCharacterComponent(): void
+
+	ReplicateCharacterTilt: Networking.Unreliable<(On: character, JointC0: CFrame) => void>
 }
 
 interface ClientToServerFunctions {

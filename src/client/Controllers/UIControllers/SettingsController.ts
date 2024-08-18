@@ -37,7 +37,8 @@ export default class SettingsController implements OnStart {
 
     private loadSetttings() {
         const [loaded, LoadedSettings] = Functions.GetLoadedPlayerSettings().await()
-        if (loaded) this.CurrentSettings = LoadedSettings
+        if (loaded)
+            this.CurrentSettings = LoadedSettings
     }
 
     private updateSetting(Setting: keyof PlayerSettings, value: unknown) {
