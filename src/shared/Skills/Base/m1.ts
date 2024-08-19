@@ -25,7 +25,7 @@ import type CharacterServer from "server/Components/CharacterServer";
 import type Dummy from "server/Components/Dummy";
 
 import GetWCS_Character from "shared/Util/GetWSC_Character";
-import Punched from "shared/VFX/Punched";
+import Hit from "shared/VFX/Hit";
 
 const log = new Logger("M1").Logger
 
@@ -127,7 +127,7 @@ export default class m1 extends Skill {
 		}
 	}
 	
-	private OnHitboxHit(character: character, BodyPart: Part) {
+	private OnHitboxHit(character: character) {
 		// Sanity Check
 		if (character === this.Character.Instance) return
 
@@ -136,10 +136,10 @@ export default class m1 extends Skill {
 		if (distance > 15) return
 		
 		// Finally register the hit
-		this.registerHit(character, BodyPart)
+		this.registerHit(character)
 	}
 	
-	private registerHit(On: character, BodyPart: Part) {
+	private registerHit(On: character) {
 		GetWCS_Character(On).andThen((WCS_Character: Character) => {
 			if (WCS_Character) {
 				// Get Character Component
@@ -150,7 +150,7 @@ export default class m1 extends Skill {
 				if (!CharacterComponent) return
 
 				// Create Punch Effect
-				new Punched(WCS_Character.Instance as character).Start(Players.GetPlayers())
+				new Hit(On).Start(Players.GetPlayers())
 				
 				// Play Hit Sound
 				SoundPlayer.PlaySoundAtPosition(

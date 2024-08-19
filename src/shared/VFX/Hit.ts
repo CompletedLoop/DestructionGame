@@ -4,7 +4,6 @@ import { BaseEffect, VisualEffectDecorator } from "@rbxts/refx";
 import { ReplicatedStorage, TweenService, Workspace } from "@rbxts/services";
 import { character } from "types/Instances/character";
 import PartCacheModule from "@rbxts/partcache";
-import SoundPlayer from "shared/Modules/SoundPlayer";
 
 const FlinchAnimations = ReplicatedStorage.Animations.Hits.Normal.GetChildren() as Animation[]
 
@@ -26,7 +25,7 @@ const Cache = new PartCacheModule(Make("Part", {
 Cache.SetCacheParent(Workspace.FX.PartCache)
 
 @VisualEffectDecorator
-export default class Punched extends BaseEffect<[character]> {
+export default class Hit extends BaseEffect<[character]> {
 	// Config
 	protected DestroyOnEnd: boolean = false;
 	protected MaxLifetime: number = .5;

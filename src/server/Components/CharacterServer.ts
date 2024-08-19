@@ -10,7 +10,6 @@ import Attacking from "shared/StatusEffects/Attacking";
 import { plr } from "types/Instances/plr";
 import LoadCharacter from "shared/Util/LoadCharacter";
 import { Events } from "server/network";
-import Punched from "shared/VFX/Punched";
 import { Make } from "@rbxts/altmake";
 
 interface CharacterAttributes {
@@ -29,6 +28,8 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 	declare public character: character
 
 	public player = Players.GetPlayerFromCharacter(this.instance) as plr 
+
+	public torso_weld = Make("WeldConstraint")
 
 	public setNetworkOwner(to: Player | undefined) {
 		this.character.GetChildren().forEach((bodypart: Part | Instance) => {
@@ -79,7 +80,7 @@ export default class CharacterServer extends BaseComponent<CharacterAttributes, 
 			.andThen(this.loadCharacterOnClient)
 	}
 	
-	InitializeCharacter() {
+	async InitializeCharacter() {
 		// Freeze Player
 		this.character.HumanoidRootPart.Anchored = true
 

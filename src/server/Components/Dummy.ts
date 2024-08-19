@@ -12,10 +12,12 @@ export default class Dummy extends CharacterServer implements OnStart {
 		this.character = this.instance as character
 		this.onDeath = Promise.fromEvent(this.character.Humanoid.Died)
 
+		this.torso_weld.Part0 = this.character.Torso
+
 		this.InitializeCharacter()
 			.andThen(this.createWSC_Character)
 			.andThen(this.setCollisionGroupOfBodyParts)
-			.andThen(this.setNetworkOwnerOfBodyParts)
+			// .andThen(this.setNetworkOwnerOfBodyParts)
 
 		new IFrame(this.WSC_Character)
 	}
