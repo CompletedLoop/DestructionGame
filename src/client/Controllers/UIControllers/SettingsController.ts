@@ -1,13 +1,8 @@
 import { Lighting, Players, Workspace } from "@rbxts/services";
-import { Controller, OnInit, OnStart } from "@flamework/core";
+import { Controller, OnStart } from "@flamework/core";
 import { Logger } from "shared/Modules/Logger";
 
 // Iris types
-import { CheckboxCreation } from "@rbxts/iris/out/widgetsTypes/Checkbox";
-import { State, Widget, WidgetArguments } from "@rbxts/iris/out/IrisDeclaration";
-import { WidgetState, WidgetEvents, WidgetExtra } from "@rbxts/iris/out/widgetsTypes";
-import { WindowCreation } from "@rbxts/iris/out/widgetsTypes/Window";
-import { InputNumCreation } from "@rbxts/iris/out/widgetsTypes/Input";
 import Iris from "@rbxts/iris";
 
 import { TopbarController } from "./TopbarController";
@@ -46,8 +41,8 @@ export default class SettingsController implements OnStart {
         Events.UpdatePlayerSettings(this.CurrentSettings)
     }
 
-    private bindToSetting(Setting: keyof PlayerSettings, State: State<unknown>, callback: (value: any) => void) {
-        State.onChange((value: any) => {
+    private bindToSetting(Setting: keyof PlayerSettings, SettingState: Iris.State<unknown>, callback: (value: any) => void) {
+        SettingState.onChange((value: any) => {
             this.updateSetting(Setting, value)
             callback(value)
         })

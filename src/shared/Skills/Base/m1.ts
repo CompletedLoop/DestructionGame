@@ -111,10 +111,21 @@ export default class m1 extends Skill {
 		this.AttackingSE.Stop()
 		this.Combo = this.Combo + 1 > m1_animations_folder.GetChildren().size()? 1 : this.Combo + 1
 	}
+
+    /** Prevents laggy players and expoiters from hitting too far away */
+    private HitboxDistanceCheck(position: Vector3): boolean {
+        if (this.Player) {
+            // const distance = this.character.GetPivot().Position.sub(this.HumanoidRoot().Position).Magnitude
+            const distance = this.Player.DistanceFromCharacter(position)
+            if (distance > 15) return false
+            else return true
+        } else return false // idk why player would be undefined but yuh
+    }
 	
 	@Message({Type: "Event", Destination: "Server"})
 	protected Hitbox(at: CFrame) {
 		// Check provided cframe
+        if (!this.HitboxDistanceCheck(at.Position)) return
 		
 		// Trigger Hitbox
         this.HitboxPart.CFrame = at
@@ -139,9 +150,8 @@ export default class m1 extends Skill {
 		// Sanity Check
 		if (character === this.Character.Instance) return
 
-		// Prevents laggy players and expoiters from hitting too far away
-		const distance = character.GetPivot().Position.sub(this.HumanoidRoot().Position).Magnitude
-		if (distance > 15) return
+        // Distance check
+        if (!this.HitboxDistanceCheck(character.GetPivot().Position)) return
 		
 		// Finally register the hit
 		this.registerHit(character)
@@ -149,37 +159,37 @@ export default class m1 extends Skill {
 	
 	private registerHit(On: character) {
 		GetWCS_Character(On).andThen((WCS_Character: Character) => {
-			if (WCS_Character) {
-				// Get Character Component
-				const CharacterComponent = On.IsDescendantOf(Workspace.Characters.Dummies)?
-				Dependency<Components>().getComponent<Dummy>(On) :
-				Dependency<Components>().getComponent<CharacterServer>(On)
+			if (!WCS_Character) return
 
-				if (!CharacterComponent) return
+            // Get Character Component
+            const CharacterComponent = On.IsDescendantOf(Workspace.Characters.Dummies)?
+            Dependency<Components>().getComponent<Dummy>(On) :
+            Dependency<Components>().getComponent<CharacterServer>(On)
 
-				// Create Punch Effect
-				new Hit(On).Start(Players.GetPlayers())
-				
-				// Play Hit Sound
-				SoundPlayer.PlaySoundAtPosition(
-					m1_sound_folder.Hit,
-					On.GetPivot().Position
-				)
-				
-				// Deal Damage
-				WCS_Character.Humanoid.TakeDamage(3.5)
-				// WCS_Character.TakeDamage({Damage: 3.5, Source: })
-				
-				// Push both Characters
-                const knockback = this.CalculateKnockback(On)
+            if (!CharacterComponent) return
 
-				// CharacterComponent.setNetworkOwnerForDuration(this.Player, .5)
-				
-				task.defer(() => {
-					this.CharacterComponent?.push(knockback.direction, knockback.force, .1)
-					CharacterComponent.push(knockback.direction, knockback.force, .1)
-				})
-			}
+            // Create Punch Effect
+            new Hit(On).Start(Players.GetPlayers())
+            
+            // Play Hit Sound
+            SoundPlayer.PlaySoundAtPosition(
+                m1_sound_folder.Hit,
+                On.GetPivot().Position
+            )
+            
+            // Deal Damage
+            WCS_Character.Humanoid.TakeDamage(3.5)
+            // WCS_Character.TakeDamage({Damage: 3.5, Source: })
+            
+            // Push both Characters
+            const knockback = this.CalculateKnockback(On)
+
+            // CharacterComponent.setNetworkOwnerForDuration(this.Player, .5)
+            
+            task.defer(() => {
+                this.CharacterComponent?.push(knockback.direction, knockback.force, .1)
+                CharacterComponent.push(knockback.direction, knockback.force, .1)
+            })
 		})
 
 		log(`Hit ${On}`)
