@@ -1,4 +1,4 @@
-import { KeyframeSequenceProvider, Players, ReplicatedStorage, RunService, Workspace } from "services";
+import { Players, ReplicatedStorage, Workspace } from "services";
 import { AnyStatus, Character, Message, Skill, SkillDecorator, StatusEffect } from "@rbxts/wcs";
 import { Components } from "@flamework/components";
 import { Constructor } from "@rbxts/wcs/out/source/utility";
@@ -45,7 +45,15 @@ export default class m1 extends Skill {
 	private LastM1: number = 0
 
     private readonly HumanoidRoot: () => Part = () => (this.Character.Instance as character).HumanoidRootPart
-    private readonly Torso: () => Part = () => (this.Character.Instance as character).Torso
+    // private readonly Torso: () => Part = () => (this.Character.Instance as character).Torso
+    
+    private CalculateKnockback(On: character): {direction: Vector3, force: number} {
+        const current_position = this.HumanoidRoot().Position
+        const direction = CFrame.lookAt(current_position, On.GetPivot().Position).LookVector
+        const force = 15
+
+        return {direction, force}
+    }
 
 	protected OnConstruct(): void {}
 
@@ -66,7 +74,7 @@ export default class m1 extends Skill {
 
 		// Create and Connect Hitbox
         this.HitboxPart = Make("Part", {
-			Transparency: .5,
+			Transparency: .6,
 			BrickColor: BrickColor.Blue(),
 			Size: new Vector3(6, 6, 7),
 			Anchored: true,
@@ -163,15 +171,13 @@ export default class m1 extends Skill {
 				// WCS_Character.TakeDamage({Damage: 3.5, Source: })
 				
 				// Push both Characters
-				const current_position = this.HumanoidRoot().Position
-				const direction = CFrame.lookAt(current_position, On.GetPivot().Position).LookVector
-				const force = 15
+                const knockback = this.CalculateKnockback(On)
 
 				// CharacterComponent.setNetworkOwnerForDuration(this.Player, .5)
 				
 				task.defer(() => {
-					this.CharacterComponent?.push(direction, force, .1)
-					CharacterComponent.push(direction, force, .1)
+					this.CharacterComponent?.push(knockback.direction, knockback.force, .1)
+					CharacterComponent.push(knockback.direction, knockback.force, .1)
 				})
 			}
 		})
@@ -201,7 +207,7 @@ export default class m1 extends Skill {
 
 	private calculateHitboxCFrame() {
 		const HumanoindRootCFrame = this.HumanoidRoot().CFrame
-		const TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(3))//.sub(new Vector3(0, 1, 0))
+		const TargetPosition = HumanoindRootCFrame.Position.add(HumanoindRootCFrame.LookVector.mul(3))
 		const finalCFrame = CFrame.lookAlong(TargetPosition, HumanoindRootCFrame.LookVector) 
 		return finalCFrame
 	}
