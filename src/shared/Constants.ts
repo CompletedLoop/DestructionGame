@@ -2,6 +2,8 @@ export const Constants = {
 	// Game
 	VERSION: "0.0.2",
 
+    LOOP_STUDIOS: 33218353,
+
 	HITBOX_LIFETIME: .2,
 
 	// Character

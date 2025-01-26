@@ -1,4 +1,4 @@
-import { Service, OnStart, Dependency } from "@flamework/core";
+import { Service, OnStart } from "@flamework/core";
 import { Players } from "services";
 import { plr } from "types/Instances/plr";
 import { DataService, PlayerProfile } from "./DataService";
@@ -7,12 +7,13 @@ import { Logger } from "shared/Modules/Logger";
 import { Events, Functions } from "server/network";
 import { PlayerSettings } from "types/Interfaces/PlayerSettings";
 import { character } from "types/Instances/character";
-import { Components } from "@flamework/components";
+// import { Components } from "@flamework/components";
 
+// import CharacterServer from "server/Components/CharacterServer";
 import GetWCS_Character from "shared/Util/GetWSC_Character";
-import CharacterServer from "server/Components/CharacterServer";
 import LoadCharacter from "shared/Util/LoadCharacter";
 import { Character } from "@rbxts/wcs";
+import { Constants } from "shared/Constants";
 
 const log = new Logger("PlayerService").Logger
 
@@ -40,10 +41,15 @@ export class PlayerService implements OnStart {
 
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	private playerAdded(player: Player) {
+        // Verify
+        this.verifyPlayerCanJoin(player)
+
+        // Load framework onto player character
 		player.CharacterAdded.Connect((character) => {
 			LoadCharacter(player).andThen(() => character.AddTag(`character`))
 		})
 
+        // Load player datastore profile
 		const player_profile = this.dataService.loadPlayerData(player as plr) as PlayerProfile
 		this.generateLeaderstatsForPlayer(player as plr, player_profile)
 		
@@ -52,6 +58,14 @@ export class PlayerService implements OnStart {
 
     private playerLeaving(player: Player) {
 		this.dataService.releasePlayerProfile(player as plr)
+    }
+
+
+    /** Since game is pre pre pre pre alpha beta charlie, gatekeep. */
+    private verifyPlayerCanJoin(player: Player) {
+        const Rank = player.GetRankInGroup(Constants.LOOP_STUDIOS)
+        if (Rank < 100) player.Kick('Cant play sorry ¯\_(ツ)_/¯')
+        
     }
 
 	private generateLeaderstatsForPlayer(player: plr, player_profile: PlayerProfile) {
@@ -91,7 +105,7 @@ export class PlayerService implements OnStart {
 	}
 
 	private onMovesetChangeRequest(player: Player, Moveset: string) {
-		// Verify that the player is allowed to switch movesets
+		// Verify if the player is allowed to switch movesets
 		const difference = tick() - (player.GetAttribute("LastMovesetChange") as number)
 		if (difference < 10) {
 			Events.SendNotificationToPlayer(player, {
